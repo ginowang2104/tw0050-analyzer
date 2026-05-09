@@ -621,8 +621,10 @@ def main():
     result = analyze(top100, components)
 
     # 4. 輸出結果
-    out_dir = Path(__file__).parent.parent / "docs"
+    # out_dir = Path(__file__).parent.parent / "docs"
+    out_dir = Path("docs")
     out_dir.mkdir(parents=True, exist_ok=True)
+    
 
     # JSON（給後續程式用）
     json_path = out_dir / "result.json"
