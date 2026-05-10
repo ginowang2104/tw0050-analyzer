@@ -1,15 +1,17 @@
 """
-台股 0050 成份股異動分析系統 v2.0
+台股 0050 成份股異動分析系統 v3.0
 ─────────────────────────────────────────────────────────
 市值計算：
-  收盤價（TWSE MI_INDEX API）
-  × 已發行普通股股數（t187ap03_L 實收資本額 ÷ 10）
-  = 市值（元）
+  收盤價來源：TWSE MI_INDEX?type=ALLBUT0999（個股盤後收盤行情）
+              → 盤中/非交易日自動改抓 STOCK_DAY_ALL（最近月份）
+  已發行股數：openapi.twse.com.tw /v1/opendata/t187ap03_L
+              實收資本額(元) ÷ 10 = 股數
+  市值 = 收盤價 × 股數
 
-0050 成份股來源（依序嘗試）：
-  A. 元大投信官網 HTML 解析
+0050 成份股：
+  A. 元大投信官網
   B. TWSE ETF 持股 API
-  C. 備援硬編碼名單（2026-03-23 生效版）
+  C. 備援硬編碼（2026-03-23 生效版）
 """
 
 import re
@@ -22,17 +24,17 @@ from pathlib import Path
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-# ── 參數 ─────────────────────────────────────────────────
 ADD_THRESHOLD = 42
 DEL_THRESHOLD = 57
 TOP_N         = 100
 
-TWSE_OPEN  = "https://openapi.twse.com.tw/v1"
-TWSE_EXCH  = "https://www.twse.com.tw"
-
 HEADERS = {
-    "User-Agent": "Mozilla/5.0 (compatible; tw0050-analyzer/2.0; +https://github.com)",
-    "Accept": "application/json",
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/124.0.0.0 Safari/537.36"
+    ),
+    "Accept-Language": "zh-TW,zh;q=0.9",
 }
 
 FALLBACK_0050 = {
@@ -52,14 +54,21 @@ FALLBACK_0050 = {
 }
 
 
-def get_json(url: str, timeout=25) -> dict | list | None:
+def get_json(url: str, timeout: int = 30) -> dict | list | None:
     try:
         r = requests.get(url, headers=HEADERS, timeout=timeout, verify=False)
         r.raise_for_status()
         r.encoding = "utf-8"
-        return r.json()
+        txt = r.text.strip()
+        if not txt:
+            print(f"  [WARN] 空回應：{url}")
+            return None
+        return json.loads(txt)
+    except json.JSONDecodeError as e:
+        print(f"  [WARN] JSON 解析失敗 {url}\n         → {e}")
+        return None
     except Exception as e:
-        print(f"  [WARN] {url}\n         → {e}")
+        print(f"  [WARN] 請求失敗 {url}\n         → {e}")
         return None
 
 
@@ -70,37 +79,56 @@ def to_float(s) -> float:
         return 0.0
 
 
-# ── Step 1：取收盤價（MI_INDEX，含發行市值欄位）────────────
-def fetch_mi_index() -> dict[str, dict]:
-    """
-    用 TWSE /exchangeReport/MI_INDEX?type=ALL 取全市場收盤行情。
-    此端點 data9 欄位含「證券代號/名稱/成交價」等，可直接取得收盤價。
-    往前找最近 5 個交易日。
-    """
-    print("[1/3] 抓取 TWSE MI_INDEX 每日收盤行情…")
+def is_listed_stock(code: str) -> bool:
+    """只保留上市普通股：4碼純數字，首碼 1~9（非 0 開頭的 ETF）"""
+    return bool(re.fullmatch(r"[1-9]\d{3}", code))
 
-    for delta in range(6):
+
+# ── Step 1：抓收盤價 ─────────────────────────────────────
+def fetch_closing_prices() -> dict[str, dict]:
+    """
+    優先用 MI_INDEX（每日盤後個股行情），往前找最近 5 個交易日。
+    type=ALLBUT0999 → 排除代號含 0999 的特殊商品，取得一般股票。
+    data9 = 一般股票行情，fields9 = 對應欄位名稱。
+    """
+    print("[1/3] 抓取 TWSE MI_INDEX 個股收盤行情（type=ALLBUT0999）…")
+
+    base_url = "https://www.twse.com.tw/exchangeReport/MI_INDEX"
+
+    for delta in range(8):
         d = date.today() - timedelta(days=delta)
-        if d.weekday() >= 5:
+        if d.weekday() >= 5:        # 跳過週六日
             continue
-        url = (f"{TWSE_EXCH}/exchangeReport/MI_INDEX"
-               f"?response=json&date={d.strftime('%Y%m%d')}&type=ALL")
+
+        url = f"{base_url}?response=json&type=ALLBUT0999&date={d.strftime('%Y%m%d')}"
+        print(f"  嘗試 {d} …", end=" ")
         data = get_json(url)
-        if not data or data.get("stat") != "OK":
+
+        if not data:
+            print("無回應")
+            time.sleep(0.5)
+            continue
+
+        stat = data.get("stat", "")
+        if stat != "OK":
+            print(f"stat={stat}（無資料）")
+            time.sleep(0.5)
             continue
 
         fields = data.get("fields9", [])
         rows   = data.get("data9",   [])
+
         if not fields or not rows:
+            print("欄位或資料為空")
             continue
 
-        # 找欄位索引
+        # 找欄位 index
         try:
-            ic = fields.index("證券代號")
-            iname = fields.index("證券名稱")
+            ic     = fields.index("證券代號")
+            iname  = fields.index("證券名稱")
             iclose = fields.index("收盤價")
         except ValueError:
-            print(f"  [WARN] MI_INDEX 欄位不符：{fields[:6]}")
+            print(f"欄位不符 fields9={fields[:5]}")
             continue
 
         result = {}
@@ -108,44 +136,60 @@ def fetch_mi_index() -> dict[str, dict]:
             code  = str(row[ic]).strip()
             name  = str(row[iname]).strip()
             close = to_float(row[iclose])
-            # 只保留 4 碼純數字、非 0 開頭（ETF 通常 0 開頭）
-            if re.fullmatch(r"[1-9]\d{3}", code) and close > 0:
+            if is_listed_stock(code) and close > 0:
                 result[code] = {"name": name, "close": close}
 
         if result:
-            print(f"  → {d} MI_INDEX 取得 {len(result)} 支上市股票")
+            print(f"✅ 取得 {len(result)} 支")
             return result
-        time.sleep(0.5)
+        print("無有效個股")
 
-    # 備援：用 openapi.twse.com.tw 的即時行情
-    print("  MI_INDEX 失敗，嘗試 openapi.twse.com.tw …")
-    for ep in ["/opendata/t51sb01", "/opendata/t51sb02"]:
-        data = get_json(TWSE_OPEN + ep)
+    # 備援：STOCK_DAY_ALL（全市場各股當月成交資訊 open_data 格式）
+    return fetch_via_stock_day_all()
+
+
+def fetch_via_stock_day_all() -> dict[str, dict]:
+    """
+    備援：STOCK_DAY_ALL?response=open_data
+    欄位：證券代號, 證券名稱, ..., 收盤價(index=6)
+    此端點每月更新一次（含該月最後收盤價），適合做備援。
+    """
+    print("  [備援] 嘗試 STOCK_DAY_ALL …")
+    # 試當月與上個月
+    for delta_months in [0, 1]:
+        d = date.today().replace(day=1) - timedelta(days=delta_months * 28)
+        url = (f"https://www.twse.com.tw/exchangeReport/STOCK_DAY_ALL"
+               f"?response=open_data&date={d.strftime('%Y%m')}01")
+        data = get_json(url)
         if not data:
             continue
-        result = {}
-        for row in data:
-            code  = str(row.get("證券代號","") or row.get("Code","")).strip()
-            name  = str(row.get("證券名稱","") or row.get("Name","")).strip()
-            close = to_float(row.get("收盤價") or row.get("成交價") or row.get("Close",""))
-            if re.fullmatch(r"[1-9]\d{3}", code) and close > 0:
-                result[code] = {"name": name, "close": close}
-        if result:
-            print(f"  → {ep} 取得 {len(result)} 支")
-            return result
+        if isinstance(data, list) and len(data) > 1:
+            result = {}
+            for row in data[1:]:    # 第 0 列為欄位名稱
+                if len(row) < 9:
+                    continue
+                code  = str(row[0]).strip()
+                name  = str(row[1]).strip()
+                close = to_float(row[6])     # 收盤價在 index 6
+                if is_listed_stock(code) and close > 0:
+                    result[code] = {"name": name, "close": close}
+            if result:
+                print(f"  → STOCK_DAY_ALL ({d.strftime('%Y-%m')}) 取得 {len(result)} 支")
+                return result
 
+    print("  [ERROR] 所有收盤價來源均失敗")
     return {}
 
 
-# ── Step 2：取已發行股數（t187ap03_L 實收資本額）────────────
+# ── Step 2：已發行股數 ───────────────────────────────────
 def fetch_shares() -> dict[str, float]:
     """
     openapi.twse.com.tw /v1/opendata/t187ap03_L
-    欄位：公司代號、實收資本額(元)
-    股數 = 實收資本額 / 10（普通股每股面額 10 元）
+    欄位「實收資本額(元)」÷ 10 = 已發行普通股股數
     """
     print("[2/3] 抓取已發行股數（t187ap03_L）…")
-    data = get_json(f"{TWSE_OPEN}/opendata/t187ap03_L")
+    url  = "https://openapi.twse.com.tw/v1/opendata/t187ap03_L"
+    data = get_json(url)
     if not data:
         return {}
 
@@ -153,20 +197,20 @@ def fetch_shares() -> dict[str, float]:
     for row in data:
         code    = str(row.get("公司代號", "")).strip()
         capital = to_float(row.get("實收資本額(元)", 0))
-        if re.fullmatch(r"[1-9]\d{3}", code) and capital > 0:
-            result[code] = capital / 10   # → 股數
+        if is_listed_stock(code) and capital > 0:
+            result[code] = capital / 10   # 股數
     print(f"  → 取得 {len(result)} 筆")
     return result
 
 
-# ── Step 3：計算市值、排名 ────────────────────────────────
+# ── Step 3：計算市值並排名 ────────────────────────────────
 def build_top100(prices: dict, shares: dict) -> list[dict]:
     rows = []
     for code, p in prices.items():
         s = shares.get(code, 0)
         if s <= 0:
             continue
-        mv = p["close"] * s   # 元
+        mv = p["close"] * s
         rows.append({
             "code": code, "name": p["name"],
             "close": p["close"], "shares": s,
@@ -179,7 +223,7 @@ def build_top100(prices: dict, shares: dict) -> list[dict]:
 
     total = len(rows)
     rows  = rows[:TOP_N]
-    print(f"  → 共 {total} 支有效股票，取前 {len(rows)} 大進行分析")
+    print(f"  → 共 {total} 支有效，取前 {len(rows)} 大")
     return rows
 
 
@@ -187,19 +231,18 @@ def build_top100(prices: dict, shares: dict) -> list[dict]:
 def fetch_0050() -> dict[str, str]:
     print("[3/3] 抓取 0050 現有成份股…")
 
-    # A. 元大投信官網（JavaScript 渲染，嘗試抓 script 內的 JSON）
+    # A. 元大投信官網
     try:
         r = requests.get(
             "https://www.yuantaetfs.com/product/detail/0050/ratio",
-            headers={**HEADERS, "Accept": "text/html"},
-            timeout=20, verify=False)
+            headers=HEADERS, timeout=20, verify=False)
         r.encoding = "utf-8"
-        for pattern in [
+        for pat in [
             r'"constituents?"\s*:\s*(\[.*?\])',
             r'"stocks"\s*:\s*(\[.*?\])',
             r'"holdings"\s*:\s*(\[.*?\])',
         ]:
-            m = re.search(pattern, r.text, re.DOTALL | re.IGNORECASE)
+            m = re.search(pat, r.text, re.DOTALL | re.IGNORECASE)
             if m:
                 stocks = json.loads(m.group(1))
                 result = {}
@@ -214,18 +257,19 @@ def fetch_0050() -> dict[str, str]:
     except Exception as e:
         print(f"  [WARN] 元大投信：{e}")
 
-    # B. TWSE ETF 持股明細 API
+    # B. TWSE ETF 持股 API
     try:
         today = date.today().strftime("%Y%m%d")
-        data  = get_json(f"{TWSE_EXCH}/fund/TWT38U"
-                         f"?response=json&date={today}&stockNo=0050")
+        data  = get_json(
+            f"https://www.twse.com.tw/fund/TWT38U"
+            f"?response=json&date={today}&stockNo=0050")
         if data and data.get("data"):
             result = {}
             for row in data["data"]:
                 if len(row) >= 2:
                     code = str(row[0]).strip()
                     name = str(row[1]).strip()
-                    if re.fullmatch(r"[1-9]\d{3}", code):
+                    if is_listed_stock(code):
                         result[code] = name
             if len(result) >= 40:
                 print(f"  → TWSE ETF API 取得 {len(result)} 檔")
@@ -233,11 +277,11 @@ def fetch_0050() -> dict[str, str]:
     except Exception as e:
         print(f"  [WARN] TWSE ETF API：{e}")
 
-    print(f"  → 線上來源失敗，使用備援名單（{len(FALLBACK_0050)} 檔，2026-03-23版）")
+    print(f"  → 使用備援名單（{len(FALLBACK_0050)} 檔，2026-03-23版）")
     return FALLBACK_0050.copy()
 
 
-# ── Step 5：分析異動 ─────────────────────────────────────
+# ── Step 5：異動分析 ─────────────────────────────────────
 def analyze(top100: list[dict], comp0050: dict[str, str]) -> dict:
     rank_map   = {s["code"]: s["rank"] for s in top100}
     comp_codes = set(comp0050)
@@ -249,7 +293,7 @@ def analyze(top100: list[dict], comp0050: dict[str, str]) -> dict:
                 "type": "Add", "rank": s["rank"],
                 "code": s["code"], "name": s["name"],
                 "market_cap": s["market_cap"],
-                "reason": f"市值排名第{s['rank']}名，尚未在0050",
+                "reason": f"市值排名第{s['rank']}，尚未在0050",
             })
 
     for code, name in comp0050.items():
@@ -265,7 +309,7 @@ def analyze(top100: list[dict], comp0050: dict[str, str]) -> dict:
             deletions.append({
                 "type": "Delete", "rank": rank,
                 "code": code, "name": name, "market_cap": mv,
-                "reason": f"市值排名第{rank}名（≥{DEL_THRESHOLD}名觸發）",
+                "reason": f"市值排名第{rank}名（≥{DEL_THRESHOLD}觸發）",
             })
 
     additions.sort(key=lambda x: x["rank"])
@@ -275,7 +319,7 @@ def analyze(top100: list[dict], comp0050: dict[str, str]) -> dict:
     del_codes = {d["code"] for d in deletions}
     for s in top100:
         s["in_0050"] = s["code"] in comp_codes
-        s["change"]  = ("Add"    if s["code"] in add_codes else
+        s["change"]  = ("Add" if s["code"] in add_codes else
                         "Delete" if s["code"] in del_codes else "")
 
     comp_list = [{
@@ -316,7 +360,7 @@ def build_html(result: dict) -> str:
     top100  = result["top100"]
     comps   = result["components"]
     changes = sorted(adds + dels,
-                     key=lambda x: (0 if x["type"]=="Add" else 1, x["rank"]))
+                     key=lambda x: (0 if x["type"] == "Add" else 1, x["rank"]))
 
     def chg_rows():
         if not changes:
@@ -324,7 +368,7 @@ def build_html(result: dict) -> str:
         out = ""
         for c in changes:
             b = ('<span class="badge badge-add">▲ 列入 Add</span>'
-                 if c["type"]=="Add"
+                 if c["type"] == "Add"
                  else '<span class="badge badge-del">▼ 踢除 Del</span>')
             r_s = f"#{c['rank']}" if c["rank"] < 999 else "#100+"
             cap = fmt_cap(c["market_cap"]) if c["market_cap"] else "—"
@@ -339,9 +383,9 @@ def build_html(result: dict) -> str:
         out = ""
         for r in top100:
             b0 = ('<span class="badge badge-in">✓</span>'
-                  if r["in_0050"] else '<span style="color:#ccc;font-size:12px">—</span>')
+                  if r["in_0050"] else '<span style="color:#ccc">—</span>')
             bc = (('<span class="badge badge-add" style="font-size:11px">+列入</span>'
-                   if r["change"]=="Add" else
+                   if r["change"] == "Add" else
                    '<span class="badge badge-del" style="font-size:11px">-踢除</span>')
                   if r["change"] else "")
             out += (f'<tr data-s="{r["code"]} {r["name"]}">'
@@ -358,8 +402,8 @@ def build_html(result: dict) -> str:
         out = ""
         for c in comps:
             bc    = ('<span class="badge badge-del" style="font-size:11px">-踢除</span>'
-                     if c["change"]=="Delete" else "")
-            rank  = f"#{c['rank']}" if c["rank"]<999 else "100名外"
+                     if c["change"] == "Delete" else "")
+            rank  = f"#{c['rank']}" if c["rank"] < 999 else "100名外"
             cap   = fmt_cap(c["market_cap"]) if c["market_cap"] else "—"
             style = ' style="background:#fff5f5"' if c["change"] else ""
             out  += (f'<tr data-s="{c["code"]} {c["name"]}"{style}>'
@@ -377,7 +421,7 @@ def build_html(result: dict) -> str:
 body{font-family:-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:var(--tx);font-size:14px}
 header{background:#1a202c;color:#fff;padding:1.25rem 2rem}
 header h1{font-size:18px;font-weight:600;margin-bottom:3px}
-header p{font-size:12px;color:#a0aec0}
+header p{font-size:12px;color:#a0aec0;line-height:1.6}
 .wrap{max-width:1150px;margin:0 auto;padding:1.25rem 1rem}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px;margin-bottom:1.25rem}
 .card{background:#fff;border:1px solid var(--bo);border-radius:8px;padding:.9rem 1rem}
@@ -385,7 +429,7 @@ header p{font-size:12px;color:#a0aec0}
 .val{font-size:24px;font-weight:600}
 .val.g{color:var(--g)}.val.r{color:var(--r)}
 .notice{background:var(--bb);border-left:4px solid var(--b);border-radius:0 6px 6px 0;
-        padding:9px 13px;font-size:13px;color:var(--b);margin-bottom:1.25rem;line-height:1.6}
+        padding:9px 13px;font-size:13px;color:var(--b);margin-bottom:1.25rem;line-height:1.7}
 .tabs{display:flex;border-bottom:2px solid var(--bo);margin-bottom:1rem}
 .tab{padding:8px 15px;font-size:13px;font-weight:500;cursor:pointer;
      border-bottom:2px solid transparent;margin-bottom:-2px;color:var(--gx);transition:all .15s}
@@ -398,8 +442,7 @@ table{width:100%;border-collapse:collapse}
 th{background:var(--bg);font-size:12px;font-weight:600;color:var(--gx);
    padding:8px 10px;text-align:left;border-bottom:1px solid var(--bo)}
 td{padding:8px 10px;border-bottom:1px solid var(--bo);vertical-align:middle}
-tr:last-child td{border-bottom:none}
-tr:hover td{background:#f7fafc}
+tr:last-child td{border-bottom:none}tr:hover td{background:#f7fafc}
 .badge{display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:500;
        padding:3px 8px;border-radius:99px;white-space:nowrap}
 .badge-add{background:var(--gb);color:var(--g);border:1px solid var(--ge)}
@@ -412,7 +455,7 @@ footer a{color:#a0aec0}
 @media(max-width:600px){
   .grid{grid-template-columns:repeat(2,1fr)}
   th,td{padding:6px 7px;font-size:12px}
-  .tab{padding:7px 11px;font-size:12px}
+  .tab{padding:7px 10px;font-size:12px}
 }"""
 
     return f"""<!DOCTYPE html>
@@ -426,13 +469,14 @@ footer a{color:#a0aec0}
 <body>
 <header>
   <h1>📊 台股 0050 成份股異動分析</h1>
-  <p>資料更新：{updated}　｜　市值 = TWSE 收盤價 × 已發行股數（t187ap03_L）　｜　成份股來源：元大投信 / TWSE</p>
+  <p>資料更新：{updated}<br>
+     市值 = TWSE 收盤價（MI_INDEX）× 已發行股數（t187ap03_L）｜成份股：元大投信 / TWSE</p>
 </header>
 <div class="wrap">
   <div class="notice">
-    ⚠️ <strong>分析規則（富時羅素 FTSE Russell）</strong>：
-    市值排名<strong>進入前{ADD_THRESHOLD}名</strong>且未在0050 → 可能列入；
-    市值排名<strong>落至{DEL_THRESHOLD}名之後</strong>且已在0050 → 可能踢除。
+    ⚠️ <strong>分析規則（富時羅素 FTSE Russell 指數邏輯）</strong>：
+    市值排名<strong>進入前 {ADD_THRESHOLD} 名</strong>且未在0050 → 可能列入；
+    市值排名<strong>落至 {DEL_THRESHOLD} 名之後</strong>且已在0050 → 可能踢除。
     每季（3/6/9/12月）正式審核，以富時羅素公告為準。
   </div>
   <div class="grid">
@@ -443,40 +487,41 @@ footer a{color:#a0aec0}
   </div>
   <div class="tabs">
     <div class="tab on"  onclick="sw('chg')">📋 異動分析 ({s['add_count']+s['del_count']})</div>
-    <div class="tab"     onclick="sw('t100')">🏆 市值前{s['top100_count']}</div>
+    <div class="tab"     onclick="sw('t100')">🏆 市值前 {s['top100_count']}</div>
     <div class="tab"     onclick="sw('comp')">📦 現有成份股 ({s['component_count']})</div>
   </div>
   <div class="pane on" id="pane-chg">
     <div class="tw"><table>
       <thead><tr>
-        <th style="width:105px">類型</th><th style="width:60px">排名</th>
-        <th style="width:65px">代號</th><th>公司名稱</th>
+        <th style="width:110px">類型</th><th style="width:65px">排名</th>
+        <th style="width:70px">代號</th><th>公司名稱</th>
         <th style="width:90px;text-align:right">市值</th><th>原因</th>
       </tr></thead>
       <tbody>{chg_rows()}</tbody>
     </table></div>
   </div>
   <div class="pane" id="pane-t100">
-    <input class="search" placeholder="搜尋代號或公司…" oninput="flt('tbt',this.value)">
+    <input class="search" placeholder="搜尋代號或公司名稱…" oninput="flt('tbt',this.value)">
     <div class="tw"><table>
       <thead><tr>
-        <th style="width:50px">排名</th><th style="width:60px">代號</th>
-        <th>公司名稱</th><th style="width:75px;text-align:right">收盤價</th>
-        <th style="width:90px;text-align:right">市值</th>
+        <th style="width:50px">排名</th><th style="width:65px">代號</th>
+        <th>公司名稱</th>
+        <th style="width:80px;text-align:right">收盤價</th>
+        <th style="width:95px;text-align:right">市值</th>
         <th style="width:55px;text-align:center">0050</th>
-        <th style="width:70px;text-align:center">異動</th>
+        <th style="width:75px;text-align:center">異動</th>
       </tr></thead>
       <tbody id="tbt">{t100_rows()}</tbody>
     </table></div>
   </div>
   <div class="pane" id="pane-comp">
-    <input class="search" placeholder="搜尋代號或公司…" oninput="flt('tbc',this.value)">
+    <input class="search" placeholder="搜尋代號或公司名稱…" oninput="flt('tbc',this.value)">
     <div class="tw"><table>
       <thead><tr>
-        <th style="width:60px">代號</th><th>公司名稱</th>
-        <th style="width:70px">排名</th>
-        <th style="width:90px;text-align:right">市值</th>
-        <th style="width:70px;text-align:center">異動</th>
+        <th style="width:65px">代號</th><th>公司名稱</th>
+        <th style="width:75px">排名</th>
+        <th style="width:95px;text-align:right">市值</th>
+        <th style="width:75px;text-align:center">異動</th>
       </tr></thead>
       <tbody id="tbc">{comp_rows()}</tbody>
     </table></div>
@@ -484,6 +529,7 @@ footer a{color:#a0aec0}
 </div>
 <footer>
   資料僅供參考，以富時羅素正式公告為準 ｜
+  <a href="https://www.twse.com.tw" target="_blank">TWSE</a>　
   <a href="https://openapi.twse.com.tw" target="_blank">TWSE OpenAPI</a>　
   <a href="https://www.yuantaetfs.com/product/detail/0050/ratio" target="_blank">元大投信0050</a>
 </footer>
@@ -507,16 +553,15 @@ function flt(id,q){{
 # ── 主程式 ───────────────────────────────────────────────
 def main():
     print("=" * 55)
-    print("台股 0050 成份股異動分析系統 v2.0")
+    print("台股 0050 成份股異動分析系統 v3.0")
     print(f"執行時間：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print("=" * 55)
 
-    prices = fetch_mi_index()
+    prices = fetch_closing_prices()
     if not prices:
         raise SystemExit("[ERROR] 無法取得收盤價，程式終止")
 
     time.sleep(1)
-
     shares = fetch_shares()
     if not shares:
         raise SystemExit("[ERROR] 無法取得發行股數，程式終止")
@@ -526,11 +571,9 @@ def main():
         raise SystemExit("[ERROR] 市值計算失敗，程式終止")
 
     time.sleep(1)
-
     comp0050 = fetch_0050()
     result   = analyze(top100, comp0050)
 
-    # 輸出
     out = Path(__file__).parent.parent / "docs"
     out.mkdir(parents=True, exist_ok=True)
 
@@ -548,8 +591,8 @@ def main():
     for d in result["deletions"]:
         r = str(d['rank']) if d['rank'] < 999 else "100+"
         print(f"    #{r:>3}  {d['code']} {d['name']}")
-    print(f"\n  HTML → docs/index.html")
-    print(f"  JSON → docs/result.json")
+    print(f"\n  ➜ docs/index.html")
+    print(f"  ➜ docs/result.json")
     print("=" * 55)
 
 
