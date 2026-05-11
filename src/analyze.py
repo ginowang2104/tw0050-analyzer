@@ -152,34 +152,20 @@ def build_top100(prices: dict) -> list[dict]:
 def fetch_0050() -> dict[str, str]:
     print("[3/3] 抓取 0050 成份股…")
     
-    # 策略 A：直接呼叫元大投信官方 API (最穩定、最準確)
-    try:
-        # FundId=1066 是 0050 的代號
-        api_url = "https://www.yuantaetfs.com/api/StkWeights?FundId=1066"
-        # 元大 API 有時會擋沒有 User-Agent 的請求
-        r = requests.get(api_url, headers=HEADERS, timeout=20, verify=False)
-        data = r.json()
-        
-        # API 回傳結構通常是 [{'Symbol': '2330', 'StockName': '台積電', ...}, ...]
-        res = {str(i['Symbol']).strip(): i['StockName'].strip() 
-               for i in data if 'Symbol' in i and 'StockName' in i}
-        
-        if len(res) >= 45:
-            print(f"  → [成功] 元大官方 API (取得 {len(res)} 檔)")
-            return res
-    except Exception as e:
-        print(f"  [跳過] 元大 API 異常: {e}")
-
-    # 策略 B：玩股網 (WantGoo) - 備援
+    # --- 策略 A：玩股網 (WantGoo) - 優先且穩定 ---
     try:
         url = "https://www.wantgoo.com/stock/etf/0050/constituent"
-        wg_headers = HEADERS.copy()
-        wg_headers["Referer"] = "https://www.wantgoo.com/"
+        # 模擬更完整的瀏覽器行為，避免被擋
+        wg_headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+            "Referer": "https://www.wantgoo.com/stock/etf/0050/",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8"
+        }
         r = requests.get(url, headers=wg_headers, timeout=20, verify=False)
         r.encoding = "utf-8"
         
-        # 修正後的 Regex：兼容更多空白與 HTML 標籤
-        # 匹配: href="/stock/2330">2330</a></td><td>台積電</td>
+        # 使用正則表達式精確匹配代號與名稱
+        # 結構: <a href="/stock/2330">2330</a></td><td>台積電</td>
         matches = re.findall(r'href="/stock/(\d+)".*?>(\d+)</a>\s*</td>\s*<td>([^<]+)</td>', r.text)
         res = {m[1]: m[2].strip() for m in matches}
         
@@ -189,13 +175,24 @@ def fetch_0050() -> dict[str, str]:
     except Exception as e:
         print(f"  [跳過] 玩股網異常: {e}")
 
-    # 策略 C：硬編碼備援 (最後防線)
-    print("  → [警告] 所有線上來源失敗，使用硬編碼名單")
-    # 確保回傳的是一份有內容的字典，避免 analyze 判定為 0 檔
-    if not FALLBACK_0050:
-        return {"2330": "台積電", "2317": "鴻海", "2454": "聯發科"} # 極端防錯
-    return FALLBACK_0050.copy()
+    # --- 策略 B：證交所官方 API (雖然可能會有 DNS 問題，但比元大 API 穩定) ---
+    try:
+        # 這是證交所直接針對特定 ETF 的成份股查詢 API
+        twse_url = f"https://www.twse.com.tw/fund/TWT38U?response=json&stockNo=0050"
+        r = requests.get(twse_url, headers=HEADERS, timeout=20, verify=False)
+        data = r.json()
+        if "data" in data:
+            # data[0] 是代號, data[1] 是名稱
+            res = {str(row[0]).strip(): str(row[1]).strip() for row in data["data"]}
+            if len(res) >= 45:
+                print(f"  → [成功] 證交所官方資料 (取得 {len(res)} 檔)")
+                return res
+    except Exception as e:
+        print(f"  [跳過] 證交所 API 異常: {e}")
 
+    # --- 策略 C：硬編碼最後防線 ---
+    print("  → [警告] 所有線上來源失敗，使用硬編碼備援名單")
+    return FALLBACK_0050.copy()
 
 # ══════════════════════════════════════════════════════
 # 異動分析、HTML 產生與主程式 (保持原邏輯)
