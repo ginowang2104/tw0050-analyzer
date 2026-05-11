@@ -151,46 +151,55 @@ def build_top100(prices: dict) -> list[dict]:
 
 def fetch_0050() -> dict[str, str]:
     print("[3/3] 抓取 0050 成份股…")
+    res = {}
 
-    # A. 玩股網 (WantGoo) - 優先來源
+    # A. 玩股網 (WantGoo)
     try:
         url = "https://www.wantgoo.com/stock/etf/0050/constituent"
-        wg_headers = HEADERS.copy()
-        wg_headers["Referer"] = "https://www.wantgoo.com/"
+        # 增加更完整的 Headers 模擬真實瀏覽器
+        wg_headers = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
+            "Referer": "https://www.wantgoo.com/"
+        }
         r = requests.get(url, headers=wg_headers, timeout=20, verify=False)
         r.encoding = "utf-8"
         
-        # 匹配結構: stock/2330">2330</a></td><td>台積電</td>
-        matches = re.findall(r'stock/(\d{4,})">(\d{4,})</a>\s*</td>\s*<td>\s*([^<]+)</td>', r.text)
-        res = {m[1]: m[2].strip() for m in matches if is_listed(m[1])}
+        # 使用更寬鬆的匹配：尋找包含 /stock/代號 的連結以及後續第一個 <td>內容
+        # 修正後的 Regex 能處理更多空白與標籤變體
+        matches = re.findall(r'href="/stock/(\d{4,})".*?>(\d{4,})</a>.*?<td>(.*?)</td>', r.text, re.DOTALL)
+        
+        for m in matches:
+            code, code_confirm, name = m[0], m[1], m[2].strip()
+            if code == code_confirm:
+                # 排除可能包含 HTML 標籤的名稱
+                clean_name = re.sub(r'<.*?>', '', name).strip()
+                res[code] = clean_name
         
         if len(res) >= 45:
             print(f"  → 玩股網成功取得 {len(res)} 檔")
             return res
         else:
-            print(f"  [WARN] 玩股網解析筆數異常 ({len(res)} 檔)，切換備援來源")
+            print(f"  [WARN] 玩股網解析筆數異常 ({len(res)} 檔)")
     except Exception as e:
-        print(f"  [WARN] 玩股網抓取失敗：{e}")
+        print(f"  [WARN] 玩股網連線失敗：{e}")
 
-    # B. 元大投信官網 (備援 1)
+    # B. 備援：元大投信官網 (直接抓取其 API 或是 JSON 資料)
+    print("  → 嘗試元大投信備援...")
     try:
-        r = requests.get("https://www.yuantaetfs.com/product/detail/0050/ratio", headers=HEADERS, timeout=20, verify=False)
-        m = re.search(r'"(constituents|stocks|holdings)"\s*:\s*(\[.*?\])', r.text, re.DOTALL | re.IGNORECASE)
-        if m:
-            items = json.loads(m.group(2))
-            res = {str(s.get("stockCode", s.get("code", ""))).strip(): s.get("stockName", s.get("name", "")) for s in items if re.fullmatch(r"\d{4,}", str(s.get("stockCode", s.get("code", ""))))}
-            if len(res) >= 40: return res
-    except: pass
+        # 元大官網有時會檢查 Referer
+        yuanta_url = "https://www.yuantaetfs.com/api/StkWeights?FundId=1066"
+        r = requests.get(yuanta_url, headers=HEADERS, timeout=20, verify=False)
+        data = r.json()
+        res = {str(i['Symbol']): i['StockName'] for i in data if 'Symbol' in i}
+        if len(res) >= 45: 
+            print(f"  → 元大 API 成功取得 {len(res)} 檔")
+            return res
+    except:
+        pass
 
-    # C. TWSE ETF API (備援 2)
-    try:
-        r2 = requests.get(f"https://www.twse.com.tw/fund/TWT38U?response=json&date={date.today().strftime('%Y%m%d')}&stockNo=0050", headers=HEADERS, timeout=20, verify=False)
-        d2 = r2.json()
-        if d2.get("data"):
-            return {str(row[0]).strip(): str(row[1]).strip() for row in d2["data"] if is_listed(str(row[0]))}
-    except: pass
-
-    print(f"  → 使用硬編碼備援名單")
+    # C. 最終備援：使用硬編碼名單
+    print("  → 使用硬編碼備援名單")
     return FALLBACK_0050.copy()
 
 
