@@ -146,60 +146,54 @@ def build_top100(prices: dict) -> list[dict]:
 
 
 # ══════════════════════════════════════════════════════
-# 0050 成份股 (更新來源為玩股網)
+# 0050 成份股
 # ══════════════════════════════════════════════════════
 
 def fetch_0050() -> dict[str, str]:
     print("[3/3] 抓取 0050 成份股…")
-    res = {}
+    
+    # 策略 A：直接呼叫元大投信官方 API (最穩定、最準確)
+    try:
+        # FundId=1066 是 0050 的代號
+        api_url = "https://www.yuantaetfs.com/api/StkWeights?FundId=1066"
+        # 元大 API 有時會擋沒有 User-Agent 的請求
+        r = requests.get(api_url, headers=HEADERS, timeout=20, verify=False)
+        data = r.json()
+        
+        # API 回傳結構通常是 [{'Symbol': '2330', 'StockName': '台積電', ...}, ...]
+        res = {str(i['Symbol']).strip(): i['StockName'].strip() 
+               for i in data if 'Symbol' in i and 'StockName' in i}
+        
+        if len(res) >= 45:
+            print(f"  → [成功] 元大官方 API (取得 {len(res)} 檔)")
+            return res
+    except Exception as e:
+        print(f"  [跳過] 元大 API 異常: {e}")
 
-    # A. 玩股網 (WantGoo)
+    # 策略 B：玩股網 (WantGoo) - 備援
     try:
         url = "https://www.wantgoo.com/stock/etf/0050/constituent"
-        # 增加更完整的 Headers 模擬真實瀏覽器
-        wg_headers = {
-            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8",
-            "Referer": "https://www.wantgoo.com/"
-        }
+        wg_headers = HEADERS.copy()
+        wg_headers["Referer"] = "https://www.wantgoo.com/"
         r = requests.get(url, headers=wg_headers, timeout=20, verify=False)
         r.encoding = "utf-8"
         
-        # 使用更寬鬆的匹配：尋找包含 /stock/代號 的連結以及後續第一個 <td>內容
-        # 修正後的 Regex 能處理更多空白與標籤變體
-        matches = re.findall(r'href="/stock/(\d{4,})".*?>(\d{4,})</a>.*?<td>(.*?)</td>', r.text, re.DOTALL)
-        
-        for m in matches:
-            code, code_confirm, name = m[0], m[1], m[2].strip()
-            if code == code_confirm:
-                # 排除可能包含 HTML 標籤的名稱
-                clean_name = re.sub(r'<.*?>', '', name).strip()
-                res[code] = clean_name
+        # 修正後的 Regex：兼容更多空白與 HTML 標籤
+        # 匹配: href="/stock/2330">2330</a></td><td>台積電</td>
+        matches = re.findall(r'href="/stock/(\d+)".*?>(\d+)</a>\s*</td>\s*<td>([^<]+)</td>', r.text)
+        res = {m[1]: m[2].strip() for m in matches}
         
         if len(res) >= 45:
-            print(f"  → 玩股網成功取得 {len(res)} 檔")
+            print(f"  → [成功] 玩股網 (取得 {len(res)} 檔)")
             return res
-        else:
-            print(f"  [WARN] 玩股網解析筆數異常 ({len(res)} 檔)")
     except Exception as e:
-        print(f"  [WARN] 玩股網連線失敗：{e}")
+        print(f"  [跳過] 玩股網異常: {e}")
 
-    # B. 備援：元大投信官網 (直接抓取其 API 或是 JSON 資料)
-    print("  → 嘗試元大投信備援...")
-    try:
-        # 元大官網有時會檢查 Referer
-        yuanta_url = "https://www.yuantaetfs.com/api/StkWeights?FundId=1066"
-        r = requests.get(yuanta_url, headers=HEADERS, timeout=20, verify=False)
-        data = r.json()
-        res = {str(i['Symbol']): i['StockName'] for i in data if 'Symbol' in i}
-        if len(res) >= 45: 
-            print(f"  → 元大 API 成功取得 {len(res)} 檔")
-            return res
-    except:
-        pass
-
-    # C. 最終備援：使用硬編碼名單
-    print("  → 使用硬編碼備援名單")
+    # 策略 C：硬編碼備援 (最後防線)
+    print("  → [警告] 所有線上來源失敗，使用硬編碼名單")
+    # 確保回傳的是一份有內容的字典，避免 analyze 判定為 0 檔
+    if not FALLBACK_0050:
+        return {"2330": "台積電", "2317": "鴻海", "2454": "聯發科"} # 極端防錯
     return FALLBACK_0050.copy()
 
 
