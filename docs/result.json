@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-05-11 13:54",
+  "updated_at": "2026-05-11 14:20",
   "market_cap_method": "A",
   "top100": [
     {
@@ -9,8 +9,8 @@
       "market_cap": 59385481153090.0,
       "market_cap_method": "A",
       "rank": 1,
-      "in_0050": true,
-      "change": ""
+      "in_0050": false,
+      "change": "Add"
     },
     {
       "code": "2454",
@@ -19,8 +19,8 @@
       "market_cap": 5822172572700.0,
       "market_cap_method": "A",
       "rank": 2,
-      "in_0050": true,
-      "change": ""
+      "in_0050": false,
+      "change": "Add"
     },
     {
       "code": "2308",
@@ -29,8 +29,8 @@
       "market_cap": 5714595323800.0,
       "market_cap_method": "A",
       "rank": 3,
-      "in_0050": true,
-      "change": ""
+      "in_0050": false,
+      "change": "Add"
     },
     {
       "code": "2317",
@@ -39,8 +39,8 @@
       "market_cap": 3500850799750.0,
       "market_cap_method": "A",
       "rank": 4,
-      "in_0050": true,
-      "change": ""
+      "in_0050": false,
+      "change": "Add"
     },
     {
       "code": "3711",
@@ -49,8 +49,8 @@
       "market_cap": 2301789870312.0,
       "market_cap_method": "A",
       "rank": 5,
-      "in_0050": true,
-      "change": ""
+      "in_0050": false,
+      "change": "Add"
     },
     {
       "code": "2383",
@@ -69,8 +69,8 @@
       "market_cap": 1509231223858.4001,
       "market_cap_method": "A",
       "rank": 7,
-      "in_0050": true,
-      "change": ""
+      "in_0050": false,
+      "change": "Add"
     },
     {
       "code": "2345",
@@ -89,8 +89,8 @@
       "market_cap": 1315224640596.0,
       "market_cap_method": "A",
       "rank": 9,
-      "in_0050": true,
-      "change": ""
+      "in_0050": false,
+      "change": "Add"
     },
     {
       "code": "2882",
@@ -99,8 +99,8 @@
       "market_cap": 1296200810240.0,
       "market_cap_method": "A",
       "rank": 10,
-      "in_0050": true,
-      "change": ""
+      "in_0050": false,
+      "change": "Add"
     },
     {
       "code": "3037",
@@ -109,8 +109,8 @@
       "market_cap": 1288784519146.0,
       "market_cap_method": "A",
       "rank": 11,
-      "in_0050": true,
-      "change": ""
+      "in_0050": false,
+      "change": "Add"
     },
     {
       "code": "2303",
@@ -119,8 +119,8 @@
       "market_cap": 1148419297714.7,
       "market_cap_method": "A",
       "rank": 12,
-      "in_0050": true,
-      "change": ""
+      "in_0050": false,
+      "change": "Add"
     },
     {
       "code": "2891",
@@ -129,8 +129,8 @@
       "market_cap": 1138028309329.2,
       "market_cap_method": "A",
       "rank": 13,
-      "in_0050": true,
-      "change": ""
+      "in_0050": false,
+      "change": "Add"
     },
     {
       "code": "2412",
@@ -139,8 +139,8 @@
       "market_cap": 1058891453392.5,
       "market_cap_method": "A",
       "rank": 14,
-      "in_0050": true,
-      "change": ""
+      "in_0050": false,
+      "change": "Add"
     },
     {
       "code": "7769",
@@ -149,8 +149,8 @@
       "market_cap": 1043594000000.0,
       "market_cap_method": "A",
       "rank": 15,
-      "in_0050": true,
-      "change": ""
+      "in_0050": false,
+      "change": "Add"
     },
     {
       "code": "6669",
@@ -159,8 +159,8 @@
       "market_cap": 966372113200.0,
       "market_cap_method": "A",
       "rank": 16,
-      "in_0050": true,
-      "change": ""
+      "in_0050": false,
+      "change": "Add"
     },
     {
       "code": "3017",
@@ -189,8 +189,8 @@
       "market_cap": 945356414956.0,
       "market_cap_method": "A",
       "rank": 19,
-      "in_0050": true,
-      "change": ""
+      "in_0050": false,
+      "change": "Add"
     },
     {
       "code": "2885",
@@ -199,8 +199,8 @@
       "market_cap": 753209971949.0,
       "market_cap_method": "A",
       "rank": 20,
-      "in_0050": true,
-      "change": ""
+      "in_0050": false,
+      "change": "Add"
     },
     {
       "code": "1303",
@@ -209,8 +209,8 @@
       "market_cap": 702670792785.3999,
       "market_cap_method": "A",
       "rank": 21,
-      "in_0050": true,
-      "change": ""
+      "in_0050": false,
+      "change": "Add"
     },
     {
       "code": "2887",
@@ -219,8 +219,8 @@
       "market_cap": 698708209211.6,
       "market_cap_method": "A",
       "rank": 22,
-      "in_0050": true,
-      "change": ""
+      "in_0050": false,
+      "change": "Add"
     },
     {
       "code": "3443",
@@ -229,8 +229,8 @@
       "market_cap": 698202056310.0,
       "market_cap_method": "A",
       "rank": 23,
-      "in_0050": true,
-      "change": ""
+      "in_0050": false,
+      "change": "Add"
     },
     {
       "code": "2368",
@@ -239,8 +239,8 @@
       "market_cap": 679004735080.0,
       "market_cap_method": "A",
       "rank": 24,
-      "in_0050": true,
-      "change": ""
+      "in_0050": false,
+      "change": "Add"
     },
     {
       "code": "2886",
@@ -249,8 +249,8 @@
       "market_cap": 596301806936.4,
       "market_cap_method": "A",
       "rank": 25,
-      "in_0050": true,
-      "change": ""
+      "in_0050": false,
+      "change": "Add"
     },
     {
       "code": "8046",
@@ -289,8 +289,8 @@
       "market_cap": 525655000000.0,
       "market_cap_method": "A",
       "rank": 29,
-      "in_0050": true,
-      "change": ""
+      "in_0050": false,
+      "change": "Add"
     },
     {
       "code": "2059",
@@ -309,8 +309,8 @@
       "market_cap": 504875861556.0,
       "market_cap_method": "A",
       "rank": 31,
-      "in_0050": true,
-      "change": ""
+      "in_0050": false,
+      "change": "Add"
     },
     {
       "code": "2357",
@@ -319,8 +319,8 @@
       "market_cap": 482794182000.0,
       "market_cap_method": "A",
       "rank": 32,
-      "in_0050": true,
-      "change": ""
+      "in_0050": false,
+      "change": "Add"
     },
     {
       "code": "2344",
@@ -329,8 +329,8 @@
       "market_cap": 481500020651.0,
       "market_cap_method": "A",
       "rank": 33,
-      "in_0050": true,
-      "change": ""
+      "in_0050": false,
+      "change": "Add"
     },
     {
       "code": "2301",
@@ -349,8 +349,8 @@
       "market_cap": 465930394625.0,
       "market_cap_method": "A",
       "rank": 35,
-      "in_0050": true,
-      "change": ""
+      "in_0050": false,
+      "change": "Add"
     },
     {
       "code": "2880",
@@ -359,8 +359,8 @@
       "market_cap": 463434937463.69995,
       "market_cap_method": "A",
       "rank": 36,
-      "in_0050": true,
-      "change": ""
+      "in_0050": false,
+      "change": "Add"
     },
     {
       "code": "2603",
@@ -379,8 +379,8 @@
       "market_cap": 449571990525.0,
       "market_cap_method": "A",
       "rank": 38,
-      "in_0050": true,
-      "change": ""
+      "in_0050": false,
+      "change": "Add"
     },
     {
       "code": "4958",
@@ -399,8 +399,8 @@
       "market_cap": 424955057580.6,
       "market_cap_method": "A",
       "rank": 40,
-      "in_0050": true,
-      "change": ""
+      "in_0050": false,
+      "change": "Add"
     },
     {
       "code": "2892",
@@ -419,8 +419,8 @@
       "market_cap": 415923528817.2,
       "market_cap_method": "A",
       "rank": 42,
-      "in_0050": true,
-      "change": ""
+      "in_0050": false,
+      "change": "Add"
     },
     {
       "code": "2395",
@@ -429,7 +429,7 @@
       "market_cap": 412568111742.5,
       "market_cap_method": "A",
       "rank": 43,
-      "in_0050": true,
+      "in_0050": false,
       "change": ""
     },
     {
@@ -439,7 +439,7 @@
       "market_cap": 409558799210.0,
       "market_cap_method": "A",
       "rank": 44,
-      "in_0050": true,
+      "in_0050": false,
       "change": ""
     },
     {
@@ -459,7 +459,7 @@
       "market_cap": 380273715215.0,
       "market_cap_method": "A",
       "rank": 46,
-      "in_0050": true,
+      "in_0050": false,
       "change": ""
     },
     {
@@ -469,7 +469,7 @@
       "market_cap": 361445595867.7,
       "market_cap_method": "A",
       "rank": 47,
-      "in_0050": true,
+      "in_0050": false,
       "change": ""
     },
     {
@@ -489,7 +489,7 @@
       "market_cap": 345913731736.30005,
       "market_cap_method": "A",
       "rank": 49,
-      "in_0050": true,
+      "in_0050": false,
       "change": ""
     },
     {
@@ -499,7 +499,7 @@
       "market_cap": 343013266290.0,
       "market_cap_method": "A",
       "rank": 50,
-      "in_0050": true,
+      "in_0050": false,
       "change": ""
     },
     {
@@ -509,7 +509,7 @@
       "market_cap": 309056714917.55,
       "market_cap_method": "A",
       "rank": 51,
-      "in_0050": true,
+      "in_0050": false,
       "change": ""
     },
     {
@@ -519,7 +519,7 @@
       "market_cap": 305183483472.0,
       "market_cap_method": "A",
       "rank": 52,
-      "in_0050": true,
+      "in_0050": false,
       "change": ""
     },
     {
@@ -549,7 +549,7 @@
       "market_cap": 303038711562.0,
       "market_cap_method": "A",
       "rank": 55,
-      "in_0050": true,
+      "in_0050": false,
       "change": ""
     },
     {
@@ -639,8 +639,8 @@
       "market_cap": 259437220660.0,
       "market_cap_method": "A",
       "rank": 64,
-      "in_0050": true,
-      "change": "Delete"
+      "in_0050": false,
+      "change": ""
     },
     {
       "code": "3044",
@@ -659,8 +659,8 @@
       "market_cap": 246498669000.35,
       "market_cap_method": "A",
       "rank": 66,
-      "in_0050": true,
-      "change": "Delete"
+      "in_0050": false,
+      "change": ""
     },
     {
       "code": "3189",
@@ -709,8 +709,8 @@
       "market_cap": 214670191414.5,
       "market_cap_method": "A",
       "rank": 71,
-      "in_0050": true,
-      "change": "Delete"
+      "in_0050": false,
+      "change": ""
     },
     {
       "code": "2376",
@@ -719,8 +719,8 @@
       "market_cap": 212354776862.0,
       "market_cap_method": "A",
       "rank": 72,
-      "in_0050": true,
-      "change": "Delete"
+      "in_0050": false,
+      "change": ""
     },
     {
       "code": "5871",
@@ -729,8 +729,8 @@
       "market_cap": 209409880612.5,
       "market_cap_method": "A",
       "rank": 73,
-      "in_0050": true,
-      "change": "Delete"
+      "in_0050": false,
+      "change": ""
     },
     {
       "code": "2327",
@@ -739,8 +739,8 @@
       "market_cap": 201450018319.0,
       "market_cap_method": "A",
       "rank": 74,
-      "in_0050": true,
-      "change": "Delete"
+      "in_0050": false,
+      "change": ""
     },
     {
       "code": "1802",
@@ -849,8 +849,8 @@
       "market_cap": 174256003073.0,
       "market_cap_method": "A",
       "rank": 85,
-      "in_0050": true,
-      "change": "Delete"
+      "in_0050": false,
+      "change": ""
     },
     {
       "code": "1504",
@@ -869,8 +869,8 @@
       "market_cap": 168530552748.0,
       "market_cap_method": "A",
       "rank": 87,
-      "in_0050": true,
-      "change": "Delete"
+      "in_0050": false,
+      "change": ""
     },
     {
       "code": "6139",
@@ -1003,359 +1003,47 @@
       "change": ""
     }
   ],
-  "components": [
+  "additions": [
     {
+      "type": "Add",
+      "rank": 1,
       "code": "2330",
       "name": "台積電",
-      "rank": 1,
       "market_cap": 59385481153090.0,
-      "change": ""
+      "reason": "市值排名第1，尚未在0050"
     },
     {
+      "type": "Add",
+      "rank": 2,
       "code": "2454",
       "name": "聯發科",
-      "rank": 2,
       "market_cap": 5822172572700.0,
-      "change": ""
+      "reason": "市值排名第2，尚未在0050"
     },
     {
+      "type": "Add",
+      "rank": 3,
       "code": "2308",
       "name": "台達電",
-      "rank": 3,
       "market_cap": 5714595323800.0,
-      "change": ""
+      "reason": "市值排名第3，尚未在0050"
     },
     {
+      "type": "Add",
+      "rank": 4,
       "code": "2317",
       "name": "鴻海",
-      "rank": 4,
       "market_cap": 3500850799750.0,
-      "change": ""
+      "reason": "市值排名第4，尚未在0050"
     },
     {
+      "type": "Add",
+      "rank": 5,
       "code": "3711",
       "name": "日月光投控",
-      "rank": 5,
       "market_cap": 2301789870312.0,
-      "change": ""
+      "reason": "市值排名第5，尚未在0050"
     },
-    {
-      "code": "2881",
-      "name": "富邦金",
-      "rank": 7,
-      "market_cap": 1509231223858.4001,
-      "change": ""
-    },
-    {
-      "code": "2382",
-      "name": "廣達",
-      "rank": 9,
-      "market_cap": 1315224640596.0,
-      "change": ""
-    },
-    {
-      "code": "2882",
-      "name": "國泰金",
-      "rank": 10,
-      "market_cap": 1296200810240.0,
-      "change": ""
-    },
-    {
-      "code": "3037",
-      "name": "欣興",
-      "rank": 11,
-      "market_cap": 1288784519146.0,
-      "change": ""
-    },
-    {
-      "code": "2303",
-      "name": "聯電",
-      "rank": 12,
-      "market_cap": 1148419297714.7,
-      "change": ""
-    },
-    {
-      "code": "2891",
-      "name": "中信金",
-      "rank": 13,
-      "market_cap": 1138028309329.2,
-      "change": ""
-    },
-    {
-      "code": "2412",
-      "name": "中華電",
-      "rank": 14,
-      "market_cap": 1058891453392.5,
-      "change": ""
-    },
-    {
-      "code": "7769",
-      "name": "鴻勁精密",
-      "rank": 15,
-      "market_cap": 1043594000000.0,
-      "change": ""
-    },
-    {
-      "code": "6669",
-      "name": "緯穎",
-      "rank": 16,
-      "market_cap": 966372113200.0,
-      "change": ""
-    },
-    {
-      "code": "2408",
-      "name": "南亞科",
-      "rank": 19,
-      "market_cap": 945356414956.0,
-      "change": ""
-    },
-    {
-      "code": "2885",
-      "name": "元大金",
-      "rank": 20,
-      "market_cap": 753209971949.0,
-      "change": ""
-    },
-    {
-      "code": "1303",
-      "name": "南亞",
-      "rank": 21,
-      "market_cap": 702670792785.3999,
-      "change": ""
-    },
-    {
-      "code": "2887",
-      "name": "台新金",
-      "rank": 22,
-      "market_cap": 698708209211.6,
-      "change": ""
-    },
-    {
-      "code": "3443",
-      "name": "創意",
-      "rank": 23,
-      "market_cap": 698202056310.0,
-      "change": ""
-    },
-    {
-      "code": "2368",
-      "name": "金像電",
-      "rank": 24,
-      "market_cap": 679004735080.0,
-      "change": ""
-    },
-    {
-      "code": "2886",
-      "name": "兆豐金",
-      "rank": 25,
-      "market_cap": 596301806936.4,
-      "change": ""
-    },
-    {
-      "code": "2884",
-      "name": "玉山金",
-      "rank": 29,
-      "market_cap": 525655000000.0,
-      "change": ""
-    },
-    {
-      "code": "6505",
-      "name": "台塑化",
-      "rank": 31,
-      "market_cap": 504875861556.0,
-      "change": ""
-    },
-    {
-      "code": "2357",
-      "name": "華碩",
-      "rank": 32,
-      "market_cap": 482794182000.0,
-      "change": ""
-    },
-    {
-      "code": "2344",
-      "name": "華邦電",
-      "rank": 33,
-      "market_cap": 481500020651.0,
-      "change": ""
-    },
-    {
-      "code": "3231",
-      "name": "緯創",
-      "rank": 35,
-      "market_cap": 465930394625.0,
-      "change": ""
-    },
-    {
-      "code": "2880",
-      "name": "華南金",
-      "rank": 36,
-      "market_cap": 463434937463.69995,
-      "change": ""
-    },
-    {
-      "code": "2890",
-      "name": "永豐金",
-      "rank": 38,
-      "market_cap": 449571990525.0,
-      "change": ""
-    },
-    {
-      "code": "2883",
-      "name": "開發金",
-      "rank": 40,
-      "market_cap": 424955057580.6,
-      "change": ""
-    },
-    {
-      "code": "1216",
-      "name": "統一",
-      "rank": 42,
-      "market_cap": 415923528817.2,
-      "change": ""
-    },
-    {
-      "code": "2395",
-      "name": "研華",
-      "rank": 43,
-      "market_cap": 412568111742.5,
-      "change": ""
-    },
-    {
-      "code": "3045",
-      "name": "台灣大",
-      "rank": 44,
-      "market_cap": 409558799210.0,
-      "change": ""
-    },
-    {
-      "code": "2449",
-      "name": "京元電子",
-      "rank": 46,
-      "market_cap": 380273715215.0,
-      "change": ""
-    },
-    {
-      "code": "5880",
-      "name": "合庫金",
-      "rank": 47,
-      "market_cap": 361445595867.7,
-      "change": ""
-    },
-    {
-      "code": "4904",
-      "name": "遠傳",
-      "rank": 49,
-      "market_cap": 345913731736.30005,
-      "change": ""
-    },
-    {
-      "code": "3008",
-      "name": "大立光",
-      "rank": 50,
-      "market_cap": 343013266290.0,
-      "change": ""
-    },
-    {
-      "code": "1301",
-      "name": "台塑",
-      "rank": 51,
-      "market_cap": 309056714917.55,
-      "change": ""
-    },
-    {
-      "code": "2379",
-      "name": "瑞昱",
-      "rank": 52,
-      "market_cap": 305183483472.0,
-      "change": ""
-    },
-    {
-      "code": "3034",
-      "name": "聯詠",
-      "rank": 55,
-      "market_cap": 303038711562.0,
-      "change": ""
-    },
-    {
-      "code": "6770",
-      "name": "力積電",
-      "rank": 64,
-      "market_cap": 259437220660.0,
-      "change": "Delete"
-    },
-    {
-      "code": "2801",
-      "name": "彰銀",
-      "rank": 66,
-      "market_cap": 246498669000.35,
-      "change": "Delete"
-    },
-    {
-      "code": "2615",
-      "name": "萬海",
-      "rank": 71,
-      "market_cap": 214670191414.5,
-      "change": "Delete"
-    },
-    {
-      "code": "2376",
-      "name": "技嘉",
-      "rank": 72,
-      "market_cap": 212354776862.0,
-      "change": "Delete"
-    },
-    {
-      "code": "5871",
-      "name": "中租-KY",
-      "rank": 73,
-      "market_cap": 209409880612.5,
-      "change": "Delete"
-    },
-    {
-      "code": "2327",
-      "name": "國巨",
-      "rank": 74,
-      "market_cap": 201450018319.0,
-      "change": "Delete"
-    },
-    {
-      "code": "2609",
-      "name": "陽明",
-      "rank": 85,
-      "market_cap": 174256003073.0,
-      "change": "Delete"
-    },
-    {
-      "code": "6239",
-      "name": "力成",
-      "rank": 87,
-      "market_cap": 168530552748.0,
-      "change": "Delete"
-    },
-    {
-      "code": "2888",
-      "name": "新光金",
-      "rank": 999,
-      "market_cap": 0,
-      "change": "Delete"
-    },
-    {
-      "code": "2474",
-      "name": "可成",
-      "rank": 999,
-      "market_cap": 0,
-      "change": "Delete"
-    },
-    {
-      "code": "2353",
-      "name": "宏碁",
-      "rank": 999,
-      "market_cap": 0,
-      "change": "Delete"
-    }
-  ],
-  "additions": [
     {
       "type": "Add",
       "rank": 6,
@@ -1366,11 +1054,83 @@
     },
     {
       "type": "Add",
+      "rank": 7,
+      "code": "2881",
+      "name": "富邦金",
+      "market_cap": 1509231223858.4001,
+      "reason": "市值排名第7，尚未在0050"
+    },
+    {
+      "type": "Add",
       "rank": 8,
       "code": "2345",
       "name": "智邦",
       "market_cap": 1332655005375.0,
       "reason": "市值排名第8，尚未在0050"
+    },
+    {
+      "type": "Add",
+      "rank": 9,
+      "code": "2382",
+      "name": "廣達",
+      "market_cap": 1315224640596.0,
+      "reason": "市值排名第9，尚未在0050"
+    },
+    {
+      "type": "Add",
+      "rank": 10,
+      "code": "2882",
+      "name": "國泰金",
+      "market_cap": 1296200810240.0,
+      "reason": "市值排名第10，尚未在0050"
+    },
+    {
+      "type": "Add",
+      "rank": 11,
+      "code": "3037",
+      "name": "欣興",
+      "market_cap": 1288784519146.0,
+      "reason": "市值排名第11，尚未在0050"
+    },
+    {
+      "type": "Add",
+      "rank": 12,
+      "code": "2303",
+      "name": "聯電",
+      "market_cap": 1148419297714.7,
+      "reason": "市值排名第12，尚未在0050"
+    },
+    {
+      "type": "Add",
+      "rank": 13,
+      "code": "2891",
+      "name": "中信金",
+      "market_cap": 1138028309329.2,
+      "reason": "市值排名第13，尚未在0050"
+    },
+    {
+      "type": "Add",
+      "rank": 14,
+      "code": "2412",
+      "name": "中華電",
+      "market_cap": 1058891453392.5,
+      "reason": "市值排名第14，尚未在0050"
+    },
+    {
+      "type": "Add",
+      "rank": 15,
+      "code": "7769",
+      "name": "鴻勁",
+      "market_cap": 1043594000000.0,
+      "reason": "市值排名第15，尚未在0050"
+    },
+    {
+      "type": "Add",
+      "rank": 16,
+      "code": "6669",
+      "name": "緯穎",
+      "market_cap": 966372113200.0,
+      "reason": "市值排名第16，尚未在0050"
     },
     {
       "type": "Add",
@@ -1387,6 +1147,62 @@
       "name": "致茂",
       "market_cap": 948298004660.0,
       "reason": "市值排名第18，尚未在0050"
+    },
+    {
+      "type": "Add",
+      "rank": 19,
+      "code": "2408",
+      "name": "南亞科",
+      "market_cap": 945356414956.0,
+      "reason": "市值排名第19，尚未在0050"
+    },
+    {
+      "type": "Add",
+      "rank": 20,
+      "code": "2885",
+      "name": "元大金",
+      "market_cap": 753209971949.0,
+      "reason": "市值排名第20，尚未在0050"
+    },
+    {
+      "type": "Add",
+      "rank": 21,
+      "code": "1303",
+      "name": "南亞",
+      "market_cap": 702670792785.3999,
+      "reason": "市值排名第21，尚未在0050"
+    },
+    {
+      "type": "Add",
+      "rank": 22,
+      "code": "2887",
+      "name": "台新新光金",
+      "market_cap": 698708209211.6,
+      "reason": "市值排名第22，尚未在0050"
+    },
+    {
+      "type": "Add",
+      "rank": 23,
+      "code": "3443",
+      "name": "創意",
+      "market_cap": 698202056310.0,
+      "reason": "市值排名第23，尚未在0050"
+    },
+    {
+      "type": "Add",
+      "rank": 24,
+      "code": "2368",
+      "name": "金像電",
+      "market_cap": 679004735080.0,
+      "reason": "市值排名第24，尚未在0050"
+    },
+    {
+      "type": "Add",
+      "rank": 25,
+      "code": "2886",
+      "name": "兆豐金",
+      "market_cap": 596301806936.4,
+      "reason": "市值排名第25，尚未在0050"
     },
     {
       "type": "Add",
@@ -1414,11 +1230,43 @@
     },
     {
       "type": "Add",
+      "rank": 29,
+      "code": "2884",
+      "name": "玉山金",
+      "market_cap": 525655000000.0,
+      "reason": "市值排名第29，尚未在0050"
+    },
+    {
+      "type": "Add",
       "rank": 30,
       "code": "2059",
       "name": "川湖",
       "market_cap": 506980423040.0,
       "reason": "市值排名第30，尚未在0050"
+    },
+    {
+      "type": "Add",
+      "rank": 31,
+      "code": "6505",
+      "name": "台塑化",
+      "market_cap": 504875861556.0,
+      "reason": "市值排名第31，尚未在0050"
+    },
+    {
+      "type": "Add",
+      "rank": 32,
+      "code": "2357",
+      "name": "華碩",
+      "market_cap": 482794182000.0,
+      "reason": "市值排名第32，尚未在0050"
+    },
+    {
+      "type": "Add",
+      "rank": 33,
+      "code": "2344",
+      "name": "華邦電",
+      "market_cap": 481500020651.0,
+      "reason": "市值排名第33，尚未在0050"
     },
     {
       "type": "Add",
@@ -1430,11 +1278,35 @@
     },
     {
       "type": "Add",
+      "rank": 35,
+      "code": "3231",
+      "name": "緯創",
+      "market_cap": 465930394625.0,
+      "reason": "市值排名第35，尚未在0050"
+    },
+    {
+      "type": "Add",
+      "rank": 36,
+      "code": "2880",
+      "name": "華南金",
+      "market_cap": 463434937463.69995,
+      "reason": "市值排名第36，尚未在0050"
+    },
+    {
+      "type": "Add",
       "rank": 37,
       "code": "2603",
       "name": "長榮",
       "market_cap": 457906593654.0,
       "reason": "市值排名第37，尚未在0050"
+    },
+    {
+      "type": "Add",
+      "rank": 38,
+      "code": "2890",
+      "name": "永豐金",
+      "market_cap": 449571990525.0,
+      "reason": "市值排名第38，尚未在0050"
     },
     {
       "type": "Add",
@@ -1446,107 +1318,35 @@
     },
     {
       "type": "Add",
+      "rank": 40,
+      "code": "2883",
+      "name": "凱基金",
+      "market_cap": 424955057580.6,
+      "reason": "市值排名第40，尚未在0050"
+    },
+    {
+      "type": "Add",
       "rank": 41,
       "code": "2892",
       "name": "第一金",
       "market_cap": 424194325175.0,
       "reason": "市值排名第41，尚未在0050"
+    },
+    {
+      "type": "Add",
+      "rank": 42,
+      "code": "1216",
+      "name": "統一",
+      "market_cap": 415923528817.2,
+      "reason": "市值排名第42，尚未在0050"
     }
   ],
-  "deletions": [
-    {
-      "type": "Delete",
-      "rank": 64,
-      "code": "6770",
-      "name": "力積電",
-      "market_cap": 259437220660.0,
-      "reason": "市值排名第64（≥57觸發）"
-    },
-    {
-      "type": "Delete",
-      "rank": 66,
-      "code": "2801",
-      "name": "彰銀",
-      "market_cap": 246498669000.35,
-      "reason": "市值排名第66（≥57觸發）"
-    },
-    {
-      "type": "Delete",
-      "rank": 71,
-      "code": "2615",
-      "name": "萬海",
-      "market_cap": 214670191414.5,
-      "reason": "市值排名第71（≥57觸發）"
-    },
-    {
-      "type": "Delete",
-      "rank": 72,
-      "code": "2376",
-      "name": "技嘉",
-      "market_cap": 212354776862.0,
-      "reason": "市值排名第72（≥57觸發）"
-    },
-    {
-      "type": "Delete",
-      "rank": 73,
-      "code": "5871",
-      "name": "中租-KY",
-      "market_cap": 209409880612.5,
-      "reason": "市值排名第73（≥57觸發）"
-    },
-    {
-      "type": "Delete",
-      "rank": 74,
-      "code": "2327",
-      "name": "國巨",
-      "market_cap": 201450018319.0,
-      "reason": "市值排名第74（≥57觸發）"
-    },
-    {
-      "type": "Delete",
-      "rank": 85,
-      "code": "2609",
-      "name": "陽明",
-      "market_cap": 174256003073.0,
-      "reason": "市值排名第85（≥57觸發）"
-    },
-    {
-      "type": "Delete",
-      "rank": 87,
-      "code": "6239",
-      "name": "力成",
-      "market_cap": 168530552748.0,
-      "reason": "市值排名第87（≥57觸發）"
-    },
-    {
-      "type": "Delete",
-      "rank": 999,
-      "code": "2888",
-      "name": "新光金",
-      "market_cap": 0,
-      "reason": "市值排名已落出前100"
-    },
-    {
-      "type": "Delete",
-      "rank": 999,
-      "code": "2474",
-      "name": "可成",
-      "market_cap": 0,
-      "reason": "市值排名已落出前100"
-    },
-    {
-      "type": "Delete",
-      "rank": 999,
-      "code": "2353",
-      "name": "宏碁",
-      "market_cap": 0,
-      "reason": "市值排名已落出前100"
-    }
-  ],
+  "deletions": [],
   "summary": {
     "top100_count": 100,
-    "component_count": 50,
-    "add_count": 12,
-    "del_count": 11
-  }
+    "component_count": 0,
+    "add_count": 42,
+    "del_count": 0
+  },
+  "components": []
 }
