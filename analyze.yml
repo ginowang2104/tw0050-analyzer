@@ -36,7 +36,16 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add docs/
-          # 若沒有變更就跳過 commit（避免空 commit 報錯）
+          
+          # 1. 強制加入 docs 資料夾內的所有檔案變更
+          git add -f docs/index.html docs/result.json
+          
+          # 2. 顯示目前的 Git 狀態（方便在 Actions Log 中檢查）
+          git status
+          
+          # 3. 執行提交：只要有任何變動（包含時間戳記）就 commit
+          # 使用 --allow-empty 作為保險，但通常建議用原本的判斷式
           git diff --staged --quiet || git commit -m "🔄 自動更新：$(date +'%Y-%m-%d %H:%M') UTC"
+          
+          # 4. 推送到 GitHub
           git push
