@@ -98,8 +98,9 @@ LATEST_0050: dict[str, tuple[str, int, float]] = {
 
 FALLBACK_0050 = {k: v[0] for k, v in LATEST_0050.items()}
 
-# 收盤價快取路徑（GitHub Actions 封鎖時，讀取上次成功的資料）
-CACHE_PATH = Path(__file__).parent.parent / "docs" / ".cache_prices.json"
+# 快取路徑（GitHub Actions 封鎖時，讀取上次成功的資料）
+CACHE_PATH        = Path(__file__).parent.parent / "docs" / ".cache_prices.json"
+CACHE_SHARES_PATH = Path(__file__).parent.parent / "docs" / ".cache_shares.json"
 
 
 def http_get(url: str, timeout: int = 30) -> requests.Response | None:
@@ -214,13 +215,39 @@ def fetch_bwibbu() -> dict[str, float]:
         return {}
 
 
+def load_shares_cache() -> dict:
+    """讀取上次成功抓取的發行股數快取（7 天內有效）"""
+    try:
+        if CACHE_SHARES_PATH.exists():
+            obj = json.loads(CACHE_SHARES_PATH.read_text(encoding="utf-8"))
+            age_h = (time.time() - obj.get("_ts", 0)) / 3600
+            if age_h < 168:  # 7 天（發行股數變動不頻繁）
+                print(f"  [快取] 使用 {age_h:.1f} 小時前的發行股數快取")
+                return obj.get("shares", {})
+            else:
+                print(f"  [快取] 發行股數快取已過期（{age_h:.1f} 小時），略過")
+    except Exception as e:
+        print(f"  [快取] 發行股數讀取失敗：{e}")
+    return {}
+
+
+def save_shares_cache(shares: dict):
+    try:
+        CACHE_SHARES_PATH.parent.mkdir(parents=True, exist_ok=True)
+        obj = {"_ts": time.time(), "shares": shares}
+        CACHE_SHARES_PATH.write_text(json.dumps(obj, ensure_ascii=False), encoding="utf-8")
+    except Exception as e:
+        print(f"  [快取] 發行股數儲存失敗：{e}")
+
+
 def fetch_shares() -> dict[str, float]:
     """從 TWSE t187ap03_L 取得各上市公司總發行股數（股）。
-    注意：此處為公司總發行股數，非 0050 ETF 持倉量。"""
+    API 封鎖時自動讀取快取（有效期 7 天）。"""
     url = "https://openapi.twse.com.tw/v1/opendata/t187ap03_L"
     r = http_get(url)
     if not r:
-        return {}
+        print("  [WARN] t187ap03_L 無法取得，嘗試讀取快取…")
+        return load_shares_cache()
     try:
         data = r.json()
         result = {}
@@ -235,11 +262,16 @@ def fetch_shares() -> dict[str, float]:
                 if val > 0:
                     result[code] = val * 1000  # 千股 → 股
                     break
-        print(f"  [市值-A] t187ap03_L 取得 {len(result)} 支總發行股數")
+        if result:
+            save_shares_cache(result)
+            print(f"  [市值-A] t187ap03_L 取得 {len(result)} 支（已更新快取）")
+        else:
+            print("  [WARN] t187ap03_L 資料為空，嘗試讀取快取…")
+            result = load_shares_cache()
         return result
     except Exception as e:
-        print(f"  [WARN] fetch_shares：{e}")
-        return {}
+        print(f"  [WARN] fetch_shares：{e}，嘗試讀取快取…")
+        return load_shares_cache()
 
 
 def build_top100(prices: dict) -> list[dict]:
