@@ -4,9 +4,16 @@
 修正項目：
   1. 0050 hardcode 更新為 2026-05-08 最新資料（50檔）
   2. 0050 成份股抓取：優先 TWSE 官方 ETF API → hardcode
-  3. 市值計算：改用 TWSE t187ap03_L 取得公司總發行股數
+     （移除 wantgoo/yuanta，解決 GitHub Actions 403/解析錯誤）
+  3. 市值計算：改用 TWSE t187ap03_L 取得公司總發行股數，
+     不再誤用 0050 ETF 持倉量（商品數量）計算市值
   4. 403 備援：收盤價加入本地快取，封鎖時自動讀取上次成功資料
-  5. index.html 加入時間戳 + no-cache meta
+  5. index.html 加入時間戳 + no-cache meta，解決 GitHub Pages 快取問題
+
+市值計算優先順序：
+  方法 A：ClosingPrice × t187ap03_L 總發行股數（正確市值）
+  方法 B：ClosingPrice² ÷ BWIBBU_ALL.PBratio（代理估算）
+  方法 C：TradeValue 排名（最後備援）
 """
 
 import re
@@ -91,10 +98,556 @@ LATEST_0050: dict[str, tuple[str, int, float]] = {
 
 FALLBACK_0050 = {k: v[0] for k, v in LATEST_0050.items()}
 
-# 收盤價快取路徑
+# 收盤價快取路徑（GitHub Actions 封鎖時，讀取上次成功的資料）
 CACHE_PATH = Path(__file__).parent.parent / "docs" / ".cache_prices.json"
+
 
 def http_get(url: str, timeout: int = 30) -> requests.Response | None:
     try:
         r = requests.get(url, headers=HEADERS, timeout=timeout, verify=False)
-        if r.status
+        if r.status_code in (403, 429):
+            print(f"  [{r.status_code}] {url}")
+            return None
+        r.raise_for_status()
+        return r
+    except Exception as e:
+        print(f"  [WARN] {url}\n         → {e}")
+        return None
+
+
+def to_float(s) -> float:
+    try:
+        return float(str(s).replace(",", "").strip())
+    except Exception:
+        return 0.0
+
+
+def is_listed(code: str) -> bool:
+    return bool(re.fullmatch(r"[1-9]\d{3}", str(code).strip()))
+
+
+# ── 收盤價本地快取（應對 403 封鎖）─────────────────────────
+
+def load_prices_cache() -> dict:
+    """讀取上次成功抓取的收盤價快取（48 小時內有效）"""
+    try:
+        if CACHE_PATH.exists():
+            obj = json.loads(CACHE_PATH.read_text(encoding="utf-8"))
+            age_h = (time.time() - obj.get("_ts", 0)) / 3600
+            if age_h < 48:
+                print(f"  [快取] 使用 {age_h:.1f} 小時前的收盤價快取資料")
+                return obj.get("prices", {})
+            else:
+                print(f"  [快取] 快取已過期（{age_h:.1f} 小時），略過")
+    except Exception as e:
+        print(f"  [快取] 讀取失敗：{e}")
+    return {}
+
+
+def save_prices_cache(prices: dict):
+    """儲存收盤價快取（隨 index.html 一併 commit 即可跨次使用）"""
+    try:
+        CACHE_PATH.parent.mkdir(parents=True, exist_ok=True)
+        obj = {"_ts": time.time(), "prices": prices}
+        CACHE_PATH.write_text(json.dumps(obj, ensure_ascii=False), encoding="utf-8")
+    except Exception as e:
+        print(f"  [快取] 儲存失敗：{e}")
+
+
+# ══════════════════════════════════════════════════════
+# Step 1：收盤價
+# ══════════════════════════════════════════════════════
+
+def fetch_prices() -> dict[str, dict]:
+    print("[1/3] 抓取收盤價（STOCK_DAY_ALL）…")
+    url = "https://openapi.twse.com.tw/v1/exchangeReport/STOCK_DAY_ALL"
+    r = http_get(url)
+    if not r:
+        print("  [WARN] 無法取得收盤價（可能遭 403 封鎖），嘗試讀取快取…")
+        return load_prices_cache()
+    try:
+        data = r.json()
+    except Exception as e:
+        print(f"  [WARN] JSON 解析失敗：{e}，嘗試讀取快取…")
+        return load_prices_cache()
+
+    result = {}
+    for row in (data if isinstance(data, list) else []):
+        code  = str(row.get("Code", "")).strip()
+        name  = str(row.get("Name", "")).strip()
+        close = to_float(row.get("ClosingPrice", 0))
+        tvol  = to_float(row.get("TradeVolume",  0))
+        tval  = to_float(row.get("TradeValue",   0))
+        if is_listed(code) and close > 0:
+            result[code] = {"name": name, "close": close,
+                            "trade_volume": tvol, "trade_value": tval}
+
+    if result:
+        save_prices_cache(result)
+        print(f"  → 取得 {len(result)} 支（已更新快取）")
+    else:
+        print("  [WARN] 收盤價資料為空，嘗試讀取快取…")
+        result = load_prices_cache()
+    return result
+
+
+# ══════════════════════════════════════════════════════
+# Step 2：市值計算
+# ══════════════════════════════════════════════════════
+
+def fetch_bwibbu() -> dict[str, float]:
+    url = "https://openapi.twse.com.tw/v1/exchangeReport/BWIBBU_ALL"
+    r = http_get(url)
+    if not r:
+        return {}
+    try:
+        data = r.json()
+        result = {}
+        for row in (data if isinstance(data, list) else []):
+            code = str(row.get("Code", "")).strip()
+            pb   = to_float(row.get("PBratio", 0))
+            if is_listed(code) and pb > 0:
+                result[code] = pb
+        print(f"  [市值-B] BWIBBU_ALL 取得 {len(result)} 筆 PBratio")
+        return result
+    except Exception:
+        return {}
+
+
+def fetch_shares() -> dict[str, float]:
+    """從 TWSE t187ap03_L 取得各上市公司總發行股數（股）。
+    注意：此處為公司總發行股數，非 0050 ETF 持倉量。"""
+    url = "https://openapi.twse.com.tw/v1/opendata/t187ap03_L"
+    r = http_get(url)
+    if not r:
+        return {}
+    try:
+        data = r.json()
+        result = {}
+        # API 欄位名稱可能使用全角或半角括號
+        SHARES_KEYS = ["普通股發行股數（千股）", "普通股發行股數(千股)"]
+        for row in (data if isinstance(data, list) else []):
+            code = str(row.get("公司代號", "")).strip()
+            if not is_listed(code):
+                continue
+            for k in SHARES_KEYS:
+                val = to_float(row.get(k, 0))
+                if val > 0:
+                    result[code] = val * 1000  # 千股 → 股
+                    break
+        print(f"  [市值-A] t187ap03_L 取得 {len(result)} 支總發行股數")
+        return result
+    except Exception as e:
+        print(f"  [WARN] fetch_shares：{e}")
+        return {}
+
+
+def build_top100(prices: dict) -> list[dict]:
+    print("[2/3] 計算市值排名…")
+
+    # 方法 A：TWSE t187ap03_L 公司總發行股數 × 收盤價（正確市值）
+    # ⚠ 勿使用 LATEST_0050 的「商品數量」—— 那是 ETF 持倉股數，非公司總股數
+    total_shares = fetch_shares()
+
+    # 方法 B：BWIBBU_ALL PBratio 代理估算
+    pb_dict = fetch_bwibbu()
+
+    rows = []
+    method_used: dict[str, str] = {}
+
+    for code, p in prices.items():
+        # 方法 A：總發行股數 × 收盤價
+        shares = total_shares.get(code, 0)
+        if shares > 0:
+            mv = p["close"] * shares
+            method_used[code] = "A"
+        # 方法 B：PBratio 代理
+        elif pb_dict.get(code, 0) > 0:
+            mv = (p["close"] ** 2) / pb_dict[code]
+            method_used[code] = "B"
+        # 方法 C：成交金額代理
+        elif p["trade_value"] > 0:
+            mv = p["trade_value"]
+            method_used[code] = "C"
+        else:
+            continue
+
+        rows.append({
+            "code": code, "name": p["name"],
+            "close": p["close"], "market_cap": mv,
+            "market_cap_method": method_used[code],
+        })
+
+    rows.sort(key=lambda x: x["market_cap"], reverse=True)
+    for i, r in enumerate(rows, 1):
+        r["rank"] = i
+
+    cnt = {"A": 0, "B": 0, "C": 0}
+    for r in rows[:TOP_N]:
+        cnt[r["market_cap_method"]] = cnt.get(r["market_cap_method"], 0) + 1
+    print(f"  → {len(rows)} 支有效，取前 {min(len(rows), TOP_N)} 大")
+    print(f"     方法分布：A（總發行股數）={cnt['A']}，B（PBratio）={cnt['B']}，C（成交金額）={cnt['C']}")
+    return rows[:TOP_N]
+
+
+# ══════════════════════════════════════════════════════
+# Step 3：0050 成份股
+# ══════════════════════════════════════════════════════
+
+def fetch_0050() -> dict[str, str]:
+    print("[3/3] 抓取 0050 成份股…")
+
+    # 只使用 TWSE 官方 ETF API（對 GitHub Actions 友善，不受反爬蟲封鎖）
+    # 移除 wantgoo / yuanta — 這兩個來源在 GitHub Actions 常遭 403，
+    # 且 wantgoo HTML 正規表達式容易解析錯誤，導致清單出錯。
+    for delta in range(5):
+        d = date.today() - timedelta(days=delta)
+        if d.weekday() >= 5:
+            continue
+        try:
+            r3 = http_get(
+                f"https://www.twse.com.tw/fund/TWT38U"
+                f"?response=json&date={d.strftime('%Y%m%d')}&stockNo=0050")
+            if r3:
+                data = r3.json()
+                if data and data.get("data"):
+                    result = {
+                        str(row[0]).strip(): str(row[1]).strip()
+                        for row in data["data"]
+                        if len(row) >= 2 and is_listed(str(row[0]).strip())
+                    }
+                    if len(result) >= 40:
+                        print(f"  → TWSE ETF API ({d}) 取得 {len(result)} 檔")
+                        return result
+        except Exception as e:
+            print(f"  [WARN] TWSE ETF API ({d})：{e}")
+        time.sleep(0.3)
+
+    print(f"  → TWSE API 無法取得，使用 hardcode 名單（{len(FALLBACK_0050)} 檔，資料日期：2026-05-08）")
+    return FALLBACK_0050.copy()
+
+
+# ══════════════════════════════════════════════════════
+# Step 4：異動分析
+# ══════════════════════════════════════════════════════
+
+def analyze(top100: list[dict], comp0050: dict[str, str]) -> dict:
+    rank_map   = {s["code"]: s["rank"] for s in top100}
+    comp_codes = set(comp0050)
+    additions, deletions = [], []
+
+    for s in top100:
+        if s["rank"] <= ADD_THRESHOLD and s["code"] not in comp_codes:
+            additions.append({
+                "type": "Add", "rank": s["rank"],
+                "code": s["code"], "name": s["name"],
+                "market_cap": s["market_cap"],
+                "reason": f"市值排名第{s['rank']}，尚未在0050",
+            })
+
+    for code, name in comp0050.items():
+        rank = rank_map.get(code)
+        if rank is None:
+            deletions.append({
+                "type": "Delete", "rank": 999,
+                "code": code, "name": name, "market_cap": 0,
+                "reason": "市值排名已落出前100",
+            })
+        elif rank >= DEL_THRESHOLD:
+            mv = next((s["market_cap"] for s in top100 if s["code"] == code), 0)
+            deletions.append({
+                "type": "Delete", "rank": rank,
+                "code": code, "name": name, "market_cap": mv,
+                "reason": f"市值排名第{rank}（≥{DEL_THRESHOLD}觸發）",
+            })
+
+    additions.sort(key=lambda x: x["rank"])
+    deletions.sort(key=lambda x: x["rank"])
+    add_codes = {a["code"] for a in additions}
+    del_codes = {d["code"] for d in deletions}
+
+    for s in top100:
+        s["in_0050"] = s["code"] in comp_codes
+        s["change"]  = ("Add" if s["code"] in add_codes else
+                        "Delete" if s["code"] in del_codes else "")
+
+    comp_list = [{
+        "code": c, "name": n,
+        "rank": rank_map.get(c, 999),
+        "weight": LATEST_0050.get(c, ("", 0, 0.0))[2],
+        "market_cap": next((s["market_cap"] for s in top100 if s["code"] == c), 0),
+        "change": "Delete" if c in del_codes else "",
+    } for c, n in comp0050.items()]
+    comp_list.sort(key=lambda x: x["rank"])
+
+    print(f"  → 可能列入 {len(additions)} 檔，可能踢除 {len(deletions)} 檔")
+    return {
+        "updated_at": datetime.now().strftime("%Y-%m-%d %H:%M"),
+        "build_ts": int(datetime.now().timestamp()),   # 用於 HTML 強制刷新
+        "top100": top100, "components": comp_list,
+        "additions": additions, "deletions": deletions,
+        "summary": {
+            "top100_count": len(top100),
+            "component_count": len(comp0050),
+            "add_count": len(additions),
+            "del_count": len(deletions),
+        },
+    }
+
+
+# ══════════════════════════════════════════════════════
+# Step 5：HTML 產生
+# ══════════════════════════════════════════════════════
+
+def fmt_cap(v: float) -> str:
+    if v >= 1e12: return f"{v/1e12:.2f} 兆"
+    if v >= 1e8:  return f"{v/1e8:.0f} 億"
+    if v >= 1e6:  return f"{v/1e6:.0f} 百萬"
+    return f"{v:,.0f}"
+
+
+def build_html(result: dict) -> str:
+    updated  = result["updated_at"]
+    build_ts = result["build_ts"]
+    s        = result["summary"]
+    adds     = result["additions"]
+    dels     = result["deletions"]
+    top100   = result["top100"]
+    comps    = result["components"]
+    changes  = sorted(adds + dels,
+                      key=lambda x: (0 if x["type"] == "Add" else 1, x["rank"]))
+
+    def chg_rows():
+        if not changes:
+            return ('<tr><td colspan="6" style="text-align:center;'
+                    'padding:2rem;color:#999">目前無異動建議</td></tr>')
+        out = ""
+        for c in changes:
+            b   = ('<span class="badge badge-add">▲ 列入 Add</span>'
+                   if c["type"] == "Add"
+                   else '<span class="badge badge-del">▼ 踢除 Del</span>')
+            r_s = f"#{c['rank']}" if c["rank"] < 999 else "#100+"
+            cap = fmt_cap(c["market_cap"]) if c["market_cap"] else "—"
+            out += (f'<tr><td>{b}</td><td class="rank">{r_s}</td>'
+                    f'<td><span class="code">{c["code"]}</span></td>'
+                    f'<td>{c["name"]}</td>'
+                    f'<td style="text-align:right;font-family:monospace">{cap}</td>'
+                    f'<td style="font-size:11px;color:#666">{c["reason"]}</td></tr>\n')
+        return out
+
+    def t100_rows():
+        out = ""
+        for r in top100:
+            b0 = ('<span class="badge badge-in">✓</span>'
+                  if r["in_0050"] else '<span style="color:#ccc">—</span>')
+            bc = (('<span class="badge badge-add" style="font-size:11px">+列入</span>'
+                   if r["change"] == "Add" else
+                   '<span class="badge badge-del" style="font-size:11px">-踢除</span>')
+                  if r["change"] else "")
+            cap = fmt_cap(r["market_cap"])
+            out += (f'<tr data-s="{r["code"]} {r["name"]}">'
+                    f'<td class="rank">#{r["rank"]}</td>'
+                    f'<td><span class="code">{r["code"]}</span></td>'
+                    f'<td>{r["name"]}</td>'
+                    f'<td style="text-align:right;font-family:monospace">{r["close"]:,.0f}</td>'
+                    f'<td style="text-align:right;font-family:monospace">{cap}</td>'
+                    f'<td style="text-align:center">{b0}</td>'
+                    f'<td style="text-align:center">{bc}</td></tr>\n')
+        return out
+
+    def comp_rows():
+        out = ""
+        for c in comps:
+            bc   = ('<span class="badge badge-del" style="font-size:11px">-踢除</span>'
+                    if c["change"] == "Delete" else "")
+            rank = f"#{c['rank']}" if c["rank"] < 999 else "100名外"
+            cap  = fmt_cap(c["market_cap"]) if c["market_cap"] else "—"
+            wt   = f'{c["weight"]:.2f}%' if c.get("weight") else "—"
+            sty  = ' style="background:#fff5f5"' if c["change"] else ""
+            out += (f'<tr data-s="{c["code"]} {c["name"]}"{sty}>'
+                    f'<td><span class="code">{c["code"]}</span></td>'
+                    f'<td>{c["name"]}</td>'
+                    f'<td class="rank">{rank}</td>'
+                    f'<td style="text-align:right;font-family:monospace">{cap}</td>'
+                    f'<td style="text-align:right">{wt}</td>'
+                    f'<td style="text-align:center">{bc}</td></tr>\n')
+        return out
+
+    css = """:root{--g:#276749;--gb:#f0fff4;--ge:#9ae6b4;--r:#9b2c2c;--rb:#fff5f5;--re:#fed7d7;
+      --b:#2b6cb0;--bb:#ebf8ff;--bo:#e2e8f0;--bg:#f7fafc;--tx:#2d3748;--gx:#4a5568}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:var(--tx);font-size:14px}
+header{background:#1a202c;color:#fff;padding:1.25rem 2rem}
+header h1{font-size:18px;font-weight:600;margin-bottom:3px}
+header p{font-size:12px;color:#a0aec0;line-height:1.6}
+.wrap{max-width:1150px;margin:0 auto;padding:1.25rem 1rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px;margin-bottom:1.25rem}
+.card{background:#fff;border:1px solid var(--bo);border-radius:8px;padding:.9rem 1rem}
+.lbl{font-size:11px;color:var(--gx);margin-bottom:3px}.val{font-size:24px;font-weight:600}
+.val.g{color:var(--g)}.val.r{color:var(--r)}
+.notice{background:var(--bb);border-left:4px solid var(--b);border-radius:0 6px 6px 0;
+        padding:9px 13px;font-size:13px;color:var(--b);margin-bottom:1.25rem;line-height:1.7}
+.tabs{display:flex;border-bottom:2px solid var(--bo);margin-bottom:1rem}
+.tab{padding:8px 15px;font-size:13px;font-weight:500;cursor:pointer;
+     border-bottom:2px solid transparent;margin-bottom:-2px;color:var(--gx);transition:all .15s}
+.tab.on{color:#1a202c;border-bottom-color:#1a202c}
+.pane{display:none}.pane.on{display:block}
+.search{width:100%;padding:7px 10px;border:1px solid var(--bo);border-radius:6px;
+        font-size:13px;margin-bottom:8px;background:#fff;color:var(--tx)}
+.tw{border:1px solid var(--bo);border-radius:8px;overflow:hidden}
+table{width:100%;border-collapse:collapse}
+th{background:var(--bg);font-size:12px;font-weight:600;color:var(--gx);
+   padding:8px 10px;text-align:left;border-bottom:1px solid var(--bo)}
+td{padding:8px 10px;border-bottom:1px solid var(--bo);vertical-align:middle}
+tr:last-child td{border-bottom:none}tr:hover td{background:#f7fafc}
+.badge{display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:500;
+       padding:3px 8px;border-radius:99px;white-space:nowrap}
+.badge-add{background:var(--gb);color:var(--g);border:1px solid var(--ge)}
+.badge-del{background:var(--rb);color:var(--r);border:1px solid var(--re)}
+.badge-in{background:#e6fffa;color:var(--g);font-size:11px;padding:2px 6px;border-radius:99px}
+.rank{color:var(--b);font-weight:600;font-variant-numeric:tabular-nums}
+.code{font-family:monospace;font-size:12px;background:var(--bg);padding:2px 5px;border-radius:4px}
+footer{text-align:center;font-size:12px;color:#a0aec0;padding:1.5rem}
+footer a{color:#a0aec0}
+@media(max-width:600px){
+  .grid{grid-template-columns:repeat(2,1fr)}
+  th,td{padding:6px 7px;font-size:12px}.tab{padding:7px 10px;font-size:12px}}"""
+
+    return f"""<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- 強制瀏覽器不快取，每次都抓最新版本 -->
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>台股 0050 成份股異動分析 | {updated}</title>
+<style>{css}</style>
+</head>
+<body>
+<header>
+  <h1>📊 台股 0050 成份股異動分析</h1>
+  <p>資料更新：{updated}　｜　Build：{build_ts}
+  <br>市值來源：TWSE STOCK_DAY_ALL（收盤價）× t187ap03_L（公司總發行股數）　｜　成份股來源：TWSE ETF API / hardcode</p>
+</header>
+<div class="wrap">
+  <div class="notice">
+    ⚠️ <strong>分析規則（富時羅素 FTSE Russell）</strong>：
+    市值排名<strong>進入前 {ADD_THRESHOLD} 名</strong>且未在0050 → 可能列入；
+    市值排名<strong>落至 {DEL_THRESHOLD} 名之後</strong>且已在0050 → 可能踢除。
+    每季（3/6/9/12月）正式審核，以富時羅素公告為準。
+  </div>
+  <div class="grid">
+    <div class="card"><div class="lbl">分析上市公司</div><div class="val">{s['top100_count']}</div></div>
+    <div class="card"><div class="lbl">0050現有成份股</div><div class="val">{s['component_count']}</div></div>
+    <div class="card"><div class="lbl">可能列入</div><div class="val g">{s['add_count']}</div></div>
+    <div class="card"><div class="lbl">可能踢除</div><div class="val r">{s['del_count']}</div></div>
+  </div>
+  <div class="tabs">
+    <div class="tab on"  onclick="sw('chg')">📋 異動分析 ({s['add_count']+s['del_count']})</div>
+    <div class="tab"     onclick="sw('t100')">🏆 市值前 {s['top100_count']}</div>
+    <div class="tab"     onclick="sw('comp')">📦 現有成份股 ({s['component_count']})</div>
+  </div>
+  <div class="pane on" id="pane-chg">
+    <div class="tw"><table>
+      <thead><tr>
+        <th style="width:110px">類型</th><th style="width:65px">排名</th>
+        <th style="width:70px">代號</th><th>公司名稱</th>
+        <th style="width:100px;text-align:right">市值</th><th>原因</th>
+      </tr></thead><tbody>{chg_rows()}</tbody>
+    </table></div>
+  </div>
+  <div class="pane" id="pane-t100">
+    <input class="search" placeholder="搜尋代號或公司名稱…" oninput="flt('tbt',this.value)">
+    <div class="tw"><table>
+      <thead><tr>
+        <th style="width:50px">排名</th><th style="width:65px">代號</th><th>公司名稱</th>
+        <th style="width:80px;text-align:right">收盤價</th>
+        <th style="width:100px;text-align:right">市值</th>
+        <th style="width:55px;text-align:center">0050</th>
+        <th style="width:75px;text-align:center">異動</th>
+      </tr></thead><tbody id="tbt">{t100_rows()}</tbody>
+    </table></div>
+  </div>
+  <div class="pane" id="pane-comp">
+    <input class="search" placeholder="搜尋代號或公司名稱…" oninput="flt('tbc',this.value)">
+    <div class="tw"><table>
+      <thead><tr>
+        <th style="width:65px">代號</th><th>公司名稱</th>
+        <th style="width:75px">排名</th>
+        <th style="width:100px;text-align:right">市值</th>
+        <th style="width:65px;text-align:right">權重</th>
+        <th style="width:75px;text-align:center">異動</th>
+      </tr></thead><tbody id="tbc">{comp_rows()}</tbody>
+    </table></div>
+  </div>
+</div>
+<footer>
+  資料僅供參考，以富時羅素正式公告為準 ｜
+  <a href="https://openapi.twse.com.tw" target="_blank">TWSE OpenAPI</a>　
+  <a href="https://www.twse.com.tw/fund/TWT38U" target="_blank">TWSE ETF持股</a>
+</footer>
+<script>
+const T=['chg','t100','comp'];
+function sw(n){{
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('on',T[i]===n));
+  T.forEach(k=>document.getElementById('pane-'+k).classList.toggle('on',k===n));
+}}
+function flt(id,q){{
+  const lq=q.toLowerCase();
+  document.getElementById(id).querySelectorAll('tr').forEach(r=>{{
+    r.style.display=(!lq||(r.dataset.s||'').toLowerCase().includes(lq))?'':'none';
+  }});
+}}
+</script>
+</body></html>"""
+
+
+# ══════════════════════════════════════════════════════
+# 主程式
+# ══════════════════════════════════════════════════════
+
+def main():
+    print("=" * 55)
+    print("台股 0050 成份股異動分析系統 v6.0")
+    print(f"執行時間：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print("=" * 55)
+
+    prices = fetch_prices()
+    if not prices:
+        raise SystemExit("[ERROR] 無法取得收盤價，程式終止")
+
+    time.sleep(1)
+    top100 = build_top100(prices)
+    if not top100:
+        raise SystemExit("[ERROR] 市值計算失敗，程式終止")
+
+    time.sleep(1)
+    comp0050 = fetch_0050()
+    result   = analyze(top100, comp0050)
+
+    out = Path(__file__).parent.parent / "docs"
+    out.mkdir(parents=True, exist_ok=True)
+
+    (out / "result.json").write_text(
+        json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+    (out / "index.html").write_text(
+        build_html(result), encoding="utf-8")
+
+    print("\n" + "=" * 55)
+    print("✅ 完成！")
+    print(f"  可能列入：{result['summary']['add_count']} 檔")
+    for a in result["additions"]:
+        print(f"    #{a['rank']:3d}  {a['code']} {a['name']}")
+    print(f"  可能踢除：{result['summary']['del_count']} 檔")
+    for d in result["deletions"]:
+        r = str(d['rank']) if d['rank'] < 999 else "100+"
+        print(f"    #{r:>3}  {d['code']} {d['name']}")
+    print(f"\n  ➜ docs/index.html（含 no-cache meta）")
+    print(f"  ➜ docs/result.json")
+    print("=" * 55)
+
+
+if __name__ == "__main__":
+    main()
