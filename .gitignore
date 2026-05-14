@@ -1,0 +1,5 @@
+# 敏感資料 - 絕對不要 commit
+note.txt
+*.env
+.env*
+secrets.*
