@@ -245,48 +245,34 @@ def fetch_shares() -> dict[str, float]:
 def build_top100(prices: dict) -> list[dict]:
     print("[2/3] 計算市值排名…")
 
-    # 方法 A：TWSE t187ap03_L 公司總發行股數 × 收盤價（正確市值）
-    # ⚠ 勿使用 LATEST_0050 的「商品數量」—— 那是 ETF 持倉股數，非公司總股數
+    # 以 t187ap03_L（台灣證交所上市普通股）為唯一白名單
+    # 不在名單內的股票（ETF、上櫃、特別股等）一律排除
     total_shares = fetch_shares()
 
-    # 方法 B：BWIBBU_ALL PBratio 代理估算
-    pb_dict = fetch_bwibbu()
+    if not total_shares:
+        print("  [WARN] t187ap03_L 無資料，無法計算市值排名")
+        return []
 
     rows = []
-    method_used: dict[str, str] = {}
 
     for code, p in prices.items():
-        # 方法 A：總發行股數 × 收盤價
+        # 不在 t187ap03_L → 非上市普通股（ETF / 上櫃 / 其他），跳過
         shares = total_shares.get(code, 0)
-        if shares > 0:
-            mv = p["close"] * shares
-            method_used[code] = "A"
-        # 方法 B：PBratio 代理
-        elif pb_dict.get(code, 0) > 0:
-            mv = (p["close"] ** 2) / pb_dict[code]
-            method_used[code] = "B"
-        # 方法 C：成交金額代理
-        elif p["trade_value"] > 0:
-            mv = p["trade_value"]
-            method_used[code] = "C"
-        else:
+        if shares <= 0:
             continue
 
+        mv = p["close"] * shares  # 唯一計算方式：收盤價 × 總發行股數
         rows.append({
             "code": code, "name": p["name"],
             "close": p["close"], "market_cap": mv,
-            "market_cap_method": method_used[code],
+            "market_cap_method": "A",
         })
 
     rows.sort(key=lambda x: x["market_cap"], reverse=True)
     for i, r in enumerate(rows, 1):
         r["rank"] = i
 
-    cnt = {"A": 0, "B": 0, "C": 0}
-    for r in rows[:TOP_N]:
-        cnt[r["market_cap_method"]] = cnt.get(r["market_cap_method"], 0) + 1
-    print(f"  → {len(rows)} 支有效，取前 {min(len(rows), TOP_N)} 大")
-    print(f"     方法分布：A（總發行股數）={cnt['A']}，B（PBratio）={cnt['B']}，C（成交金額）={cnt['C']}")
+    print(f"  → t187ap03_L 上市普通股 {len(rows)} 支，取前 {min(len(rows), TOP_N)} 大")
     return rows[:TOP_N]
 
 
