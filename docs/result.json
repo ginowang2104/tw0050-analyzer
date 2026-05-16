@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-05-16 06:51",
-  "build_ts": 1778914266,
+  "updated_at": "2026-05-16 07:30",
+  "build_ts": 1778916635,
   "top100": [
     {
       "code": "2330",
@@ -1457,6 +1457,7 @@
       "reason": "市值排名第93（≥57觸發）"
     }
   ],
+  "comp_source": "hardcode（最後更新：2026-05-08，元大投信）",
   "summary": {
     "top100_count": 100,
     "component_count": 50,

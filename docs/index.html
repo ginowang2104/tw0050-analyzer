@@ -7,7 +7,7 @@
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
-<title>台股 0050 成份股異動分析 | 2026-05-16 06:51</title>
+<title>台股 0050 成份股異動分析 | 2026-05-16 07:30</title>
 <style>:root{--g:#276749;--gb:#f0fff4;--ge:#9ae6b4;--r:#9b2c2c;--rb:#fff5f5;--re:#fed7d7;
       --b:#2b6cb0;--bb:#ebf8ff;--bo:#e2e8f0;--bg:#f7fafc;--tx:#2d3748;--gx:#4a5568}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -39,6 +39,8 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#f7fafc}
        padding:3px 8px;border-radius:99px;white-space:nowrap}
 .badge-add{background:var(--gb);color:var(--g);border:1px solid var(--ge)}
 .badge-del{background:var(--rb);color:var(--r);border:1px solid var(--re)}
+.badge-add-strong{background:var(--g);color:#fff;border:1px solid var(--g);font-weight:700}
+.badge-del-strong{background:var(--r);color:#fff;border:1px solid var(--r);font-weight:700}
 .badge-in{background:#e6fffa;color:var(--g);font-size:11px;padding:2px 6px;border-radius:99px}
 .rank{color:var(--b);font-weight:600;font-variant-numeric:tabular-nums}
 .code{font-family:monospace;font-size:12px;background:var(--bg);padding:2px 5px;border-radius:4px}
@@ -51,8 +53,8 @@ footer a{color:#a0aec0}
 <body>
 <header>
   <h1>📊 台股 0050 成份股異動分析</h1>
-  <p>資料更新：2026-05-16 06:51　｜　Build：1778914266
-  <br>市值來源：TWSE STOCK_DAY_ALL（收盤價）× t187ap03_L（公司總發行股數）　｜　成份股來源：TWSE ETF API / hardcode</p>
+  <p>資料更新：2026-05-16 07:30　｜　Build：1778916635
+  <br>市值來源：TWSE STOCK_DAY_ALL（收盤價）× t187ap03_L（公司總發行股數）　｜　成份股來源：hardcode（最後更新：2026-05-08，元大投信）</p>
 </header>
 <div class="wrap">
   <div class="notice">
@@ -61,6 +63,7 @@ footer a{color:#a0aec0}
     市值排名<strong>落至 57 名之後</strong>且已在0050 → 可能踢除。
     每季（3/6/9/12月）正式審核，以富時羅素公告為準。
   </div>
+  <div class="notice" style="background:#fffbeb;border-left-color:#d97706;color:#92400e">⚠️ <strong>現有成份股資料來源：{comp_source}</strong>，非即時資料。TWSE API 不可用時自動啟用，成份股清單可能與最新不符，請留意。</div>
   <div class="grid">
     <div class="card"><div class="lbl">分析上市公司</div><div class="val">100</div></div>
     <div class="card"><div class="lbl">0050現有成份股</div><div class="val">50</div></div>
@@ -78,12 +81,12 @@ footer a{color:#a0aec0}
         <th style="width:110px">類型</th><th style="width:65px">排名</th>
         <th style="width:70px">代號</th><th>公司名稱</th>
         <th style="width:100px;text-align:right">市值</th><th>原因</th>
-      </tr></thead><tbody><tr><td><span class="badge badge-add">▲ 列入 Add</span></td><td class="rank">#24</td><td><span class="code">3443</span></td><td>創意</td><td style="text-align:right;font-family:monospace">649.29 兆</td><td style="font-size:11px;color:#666">市值排名第24，尚未在0050</td></tr>
-<tr><td><span class="badge badge-add">▲ 列入 Add</span></td><td class="rank">#30</td><td><span class="code">8046</span></td><td>南電</td><td style="text-align:right;font-family:monospace">507.89 兆</td><td style="font-size:11px;color:#666">市值排名第30，尚未在0050</td></tr>
+      </tr></thead><tbody><tr style="background:#dcfce7"><td><span class="badge badge-add-strong">▲ 強力列入 Add ★</span></td><td class="rank">#24</td><td><span class="code">3443</span></td><td>創意</td><td style="text-align:right;font-family:monospace">649.29 兆</td><td style="font-size:11px;color:#666">市值排名第24，尚未在0050</td></tr>
+<tr style="background:#dcfce7"><td><span class="badge badge-add-strong">▲ 強力列入 Add ★</span></td><td class="rank">#30</td><td><span class="code">8046</span></td><td>南電</td><td style="text-align:right;font-family:monospace">507.89 兆</td><td style="font-size:11px;color:#666">市值排名第30，尚未在0050</td></tr>
 <tr><td><span class="badge badge-add">▲ 列入 Add</span></td><td class="rank">#41</td><td><span class="code">4958</span></td><td>臻鼎-KY</td><td style="text-align:right;font-family:monospace">429.31 兆</td><td style="font-size:11px;color:#666">市值排名第41，尚未在0050</td></tr>
 <tr><td><span class="badge badge-del">▼ 踢除 Del</span></td><td class="rank">#58</td><td><span class="code">2002</span></td><td>中鋼</td><td style="text-align:right;font-family:monospace">285.59 兆</td><td style="font-size:11px;color:#666">市值排名第58（≥57觸發）</td></tr>
-<tr><td><span class="badge badge-del">▼ 踢除 Del</span></td><td class="rank">#64</td><td><span class="code">2207</span></td><td>和泰車</td><td style="text-align:right;font-family:monospace">260.72 兆</td><td style="font-size:11px;color:#666">市值排名第64（≥57觸發）</td></tr>
-<tr><td><span class="badge badge-del">▼ 踢除 Del</span></td><td class="rank">#93</td><td><span class="code">6919</span></td><td>康霈</td><td style="text-align:right;font-family:monospace">149.65 兆</td><td style="font-size:11px;color:#666">市值排名第93（≥57觸發）</td></tr>
+<tr style="background:#fee2e2"><td><span class="badge badge-del-strong">▼ 強力踢除 Del ★</span></td><td class="rank">#64</td><td><span class="code">2207</span></td><td>和泰車</td><td style="text-align:right;font-family:monospace">260.72 兆</td><td style="font-size:11px;color:#666">市值排名第64（≥57觸發）</td></tr>
+<tr style="background:#fee2e2"><td><span class="badge badge-del-strong">▼ 強力踢除 Del ★</span></td><td class="rank">#93</td><td><span class="code">6919</span></td><td>康霈</td><td style="text-align:right;font-family:monospace">149.65 兆</td><td style="font-size:11px;color:#666">市值排名第93（≥57觸發）</td></tr>
 </tbody>
     </table></div>
   </div>
