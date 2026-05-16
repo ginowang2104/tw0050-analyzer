@@ -105,6 +105,10 @@ FALLBACK_0050 = {k: v[0] for k, v in LATEST_0050.items()}
 # 快取路徑（GitHub Actions 封鎖時，讀取上次成功的資料）
 CACHE_PATH        = Path(__file__).parent.parent / "docs" / ".cache_prices.json"
 CACHE_SHARES_PATH = Path(__file__).parent.parent / "docs" / ".cache_shares.json"
+# 發行股數快取版本：版本不符時強制重新抓取（v2 起已扣除庫藏股）
+CACHE_SHARES_VERSION = "v2-treasury-adj"
+# 成份股 CSV 路徑（可直接用 Excel / 文字編輯器更新，免改 Python）
+COMP_CSV_PATH = Path(__file__).parent.parent / "0050_components.csv"
 
 
 def http_get(url: str, timeout: int = 30) -> requests.Response | None:
@@ -225,6 +229,10 @@ def load_shares_cache() -> dict:
     try:
         if CACHE_SHARES_PATH.exists():
             obj = json.loads(CACHE_SHARES_PATH.read_text(encoding="utf-8"))
+            # 版本不符（舊版未扣庫藏股）→ 丟棄並強制重新抓取
+            if obj.get("_version") != CACHE_SHARES_VERSION:
+                print("  [快取] 發行股數快取版本不符（舊版未扣庫藏股），強制更新…")
+                return {}
             age_h = (time.time() - obj.get("_ts", 0)) / 3600
             if age_h < 168:  # 7 天（發行股數變動不頻繁）
                 print(f"  [快取] 使用 {age_h:.1f} 小時前的發行股數快取")
@@ -239,7 +247,7 @@ def load_shares_cache() -> dict:
 def save_shares_cache(shares: dict):
     try:
         CACHE_SHARES_PATH.parent.mkdir(parents=True, exist_ok=True)
-        obj = {"_ts": time.time(), "shares": shares}
+        obj = {"_ts": time.time(), "_version": CACHE_SHARES_VERSION, "shares": shares}
         CACHE_SHARES_PATH.write_text(json.dumps(obj, ensure_ascii=False), encoding="utf-8")
     except Exception as e:
         print(f"  [快取] 發行股數儲存失敗：{e}")
@@ -415,7 +423,33 @@ def build_top100(prices: dict) -> list[dict]:
 # Step 3：0050 成份股
 # ══════════════════════════════════════════════════════
 
-def fetch_0050() -> tuple[dict[str, str], str]:
+def load_components_csv() -> dict[str, tuple[str, int, float]]:
+    """從 0050_components.csv 讀取成份股（格式同 LATEST_0050）。
+    CSV 欄位：代號,名稱,商品數量,權重
+    最後更新日期以檔案修改時間為準。"""
+    if not COMP_CSV_PATH.exists():
+        return {}
+    try:
+        import csv
+        result = {}
+        with open(COMP_CSV_PATH, newline='', encoding='utf-8-sig') as f:
+            for row in csv.DictReader(f):
+                code = str(row.get('代號', '')).strip()
+                name = str(row.get('名稱', '')).strip()
+                qty  = int(float(str(row.get('商品數量', '0')).replace(',', '')))
+                wt   = float(str(row.get('權重', '0')).replace('%', '').replace(',', ''))
+                if is_listed(code) and name:
+                    result[code] = (name, qty, wt)
+        if result:
+            mtime = datetime.fromtimestamp(COMP_CSV_PATH.stat().st_mtime).strftime('%Y-%m-%d')
+            print(f"  [CSV] 成份股載入 {len(result)} 檔（檔案更新時間：{mtime}）")
+        return result
+    except Exception as e:
+        print(f"  [WARN] 讀取 0050_components.csv 失敗：{e}")
+        return {}
+
+
+def fetch_0050(csv_data: dict | None = None) -> tuple[dict[str, str], str]:
     """回傳 (成份股dict, 來源說明)。來源說明用於 HTML 顯示。"""
     print("[3/3] 抓取 0050 成份股…")
 
@@ -445,7 +479,14 @@ def fetch_0050() -> tuple[dict[str, str], str]:
             print(f"  [WARN] TWSE ETF API ({d})：{e}")
         time.sleep(0.3)
 
-    print(f"  → TWSE API 無法取得，使用 hardcode 名單（{len(FALLBACK_0050)} 檔，資料日期：2026-05-08）")
+    # CSV 備援（比 hardcode 更容易更新，以檔案修改時間為最後更新日期）
+    if csv_data and len(csv_data) >= 40:
+        mtime = datetime.fromtimestamp(COMP_CSV_PATH.stat().st_mtime).strftime('%Y-%m-%d')
+        simple = {k: v[0] for k, v in csv_data.items()}
+        print(f"  → 使用本地 CSV 名單（{len(simple)} 檔，最後更新：{mtime}）")
+        return simple, f"本地CSV（最後更新：{mtime}）"
+
+    print(f"  → CSV 不可用，使用 hardcode 名單（{len(FALLBACK_0050)} 檔，資料日期：2026-05-08）")
     return FALLBACK_0050.copy(), "hardcode（最後更新：2026-05-08，元大投信）"
 
 
@@ -453,7 +494,9 @@ def fetch_0050() -> tuple[dict[str, str], str]:
 # Step 4：異動分析
 # ══════════════════════════════════════════════════════
 
-def analyze(top100: list[dict], comp0050: dict[str, str], comp_source: str = "") -> dict:
+def analyze(top100: list[dict], comp0050: dict[str, str], comp_source: str = "",
+            comp_data: dict | None = None) -> dict:
+    _comp_data = comp_data if comp_data else LATEST_0050
     rank_map   = {s["code"]: s["rank"] for s in top100}
     comp_codes = set(comp0050)
     additions, deletions = [], []
@@ -496,7 +539,7 @@ def analyze(top100: list[dict], comp0050: dict[str, str], comp_source: str = "")
     comp_list = [{
         "code": c, "name": n,
         "rank": rank_map.get(c, 999),
-        "weight": LATEST_0050.get(c, ("", 0, 0.0))[2],
+        "weight": _comp_data.get(c, LATEST_0050.get(c, ("", 0, 0.0)))[2],
         "market_cap": next((s["market_cap"] for s in top100 if s["code"] == c), 0),
         "change": "Delete" if c in del_codes else "",
     } for c, n in comp0050.items()]
@@ -761,8 +804,10 @@ def main():
         raise SystemExit("[ERROR] 所有市值估算方法（A/B/C）均失敗，程式終止")
 
     time.sleep(1)
-    comp0050, comp_source = fetch_0050()
-    result   = analyze(top100, comp0050, comp_source)
+    csv_data             = load_components_csv()
+    comp0050, comp_source = fetch_0050(csv_data)
+    comp_data            = csv_data if csv_data else LATEST_0050
+    result               = analyze(top100, comp0050, comp_source, comp_data)
 
     out = Path(__file__).parent.parent / "docs"
     out.mkdir(parents=True, exist_ok=True)
