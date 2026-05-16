@@ -1,5 +1,5 @@
 """
-台股 0050 成份股異動分析系統 v6.1
+台股 0050 成份股異動分析系統 v6.2
 ─────────────────────────────────────────────────────────
 修正項目：
   1. 0050 hardcode 更新為 2026-05-08 最新資料（50檔）
@@ -9,6 +9,10 @@
      不再誤用 0050 ETF 持倉量（商品數量）計算市值
   4. 403 備援：收盤價加入本地快取，封鎖時自動讀取上次成功資料
   5. index.html 加入時間戳 + no-cache meta，解決 GitHub Pages 快取問題
+  6. [v6.2] is_listed 排除 9xxx 台灣存託憑證（DR）
+     t187ap03_L 欄位動態偵測 + 合理性驗證
+     市值計算加入 Method B（PBratio）/ Method C（TradeValue）備援，
+     避免 t187ap03_L 失敗時 exit code 1
 
 市值計算優先順序：
   方法 A：ClosingPrice × t187ap03_L 總發行股數（正確市值）
@@ -124,7 +128,8 @@ def to_float(s) -> float:
 
 
 def is_listed(code: str) -> bool:
-    return bool(re.fullmatch(r"[1-9]\d{3}", str(code).strip()))
+    # 9xxx = 台灣存託憑證（DR），不列入上市普通股
+    return bool(re.fullmatch(r"[1-8]\d{3}", str(code).strip()))
 
 
 # ── 收盤價本地快取（應對 403 封鎖）─────────────────────────
@@ -250,10 +255,33 @@ def fetch_shares() -> dict[str, float]:
         return load_shares_cache()
     try:
         data = r.json()
+        if not isinstance(data, list) or not data:
+            print("  [WARN] t187ap03_L 回傳空資料，嘗試讀取快取…")
+            return load_shares_cache()
+
+        # 偵測實際欄位名稱（方便除錯）
+        first_keys = list(data[0].keys()) if data else []
+        print(f"  [除錯] t187ap03_L 欄位：{first_keys}")
+
+        # 嘗試多種可能的欄位名稱（千股 / 仟股，全角 / 半角括號）
+        SHARES_KEYS = [
+            "普通股發行股數（千股）",   # 全角括號 + 千
+            "普通股發行股數(千股)",     # 半角括號 + 千
+            "普通股發行股數（仟股）",   # 全角括號 + 仟
+            "普通股發行股數(仟股)",     # 半角括號 + 仟
+            "普通股(千股)",
+            "普通股(仟股)",
+        ]
+        # 動態偵測：從實際欄位中找包含「普通股」與「股」的欄位
+        for k in first_keys:
+            if "普通股" in k and ("千股" in k or "仟股" in k or "股數" in k):
+                if k not in SHARES_KEYS:
+                    SHARES_KEYS.insert(0, k)
+                    print(f"  [除錯] 動態偵測到發行股數欄位：{k}")
+
         result = {}
-        # API 欄位名稱可能使用全角或半角括號
-        SHARES_KEYS = ["普通股發行股數（千股）", "普通股發行股數(千股)"]
-        for row in (data if isinstance(data, list) else []):
+        matched_key = None
+        for row in data:
             code = str(row.get("公司代號", "")).strip()
             if not is_listed(code):
                 continue
@@ -261,12 +289,21 @@ def fetch_shares() -> dict[str, float]:
                 val = to_float(row.get(k, 0))
                 if val > 0:
                     result[code] = val * 1000  # 千股 → 股
+                    if matched_key is None:
+                        matched_key = k
+                        print(f"  [市值-A] 使用欄位：{k}")
                     break
+
         if result:
+            # 簡易合理性檢查：台積電（2330）應有逾百億股
+            tsmc = result.get("2330", 0)
+            if tsmc > 0 and tsmc < 1_000_000_000:
+                print(f"  [WARN] 台積電股數異常（{tsmc:,}股），資料可能單位有誤，清除快取")
+                return load_shares_cache()
             save_shares_cache(result)
             print(f"  [市值-A] t187ap03_L 取得 {len(result)} 支（已更新快取）")
         else:
-            print("  [WARN] t187ap03_L 資料為空，嘗試讀取快取…")
+            print(f"  [WARN] t187ap03_L 無法匹配發行股數欄位（欄位列表：{first_keys}），嘗試讀取快取…")
             result = load_shares_cache()
         return result
     except Exception as e:
@@ -277,35 +314,75 @@ def fetch_shares() -> dict[str, float]:
 def build_top100(prices: dict) -> list[dict]:
     print("[2/3] 計算市值排名…")
 
-    # 以 t187ap03_L（台灣證交所上市普通股）為唯一白名單
-    # 不在名單內的股票（ETF、上櫃、特別股等）一律排除
+    # ── Method A：收盤價 × t187ap03_L 總發行股數（正確市值）────────────
     total_shares = fetch_shares()
 
-    if not total_shares:
-        print("  [WARN] t187ap03_L 無資料，無法計算市值排名")
-        return []
+    if total_shares:
+        rows = []
+        for code, p in prices.items():
+            shares = total_shares.get(code, 0)
+            if shares <= 0:
+                continue
+            mv = p["close"] * shares
+            rows.append({
+                "code": code, "name": p["name"],
+                "close": p["close"], "market_cap": mv,
+                "market_cap_method": "A",
+            })
+        if rows:
+            rows.sort(key=lambda x: x["market_cap"], reverse=True)
+            for i, r in enumerate(rows, 1):
+                r["rank"] = i
+            print(f"  → [方法A] t187ap03_L 上市普通股 {len(rows)} 支，取前 {min(len(rows), TOP_N)} 大")
+            return rows[:TOP_N]
+        print("  [WARN] Method A：shares 有資料但無股票通過篩選，嘗試 Method B…")
+    else:
+        print("  [WARN] t187ap03_L 無資料，嘗試 Method B（PBratio 代理估算）…")
 
+    # ── Method B：ClosingPrice² ÷ PBratio（代理排名）────────────────────
+    bwibbu = fetch_bwibbu()
+    if bwibbu:
+        rows = []
+        for code, p in prices.items():
+            pb = bwibbu.get(code, 0)
+            if pb <= 0:
+                continue
+            mv = p["close"] ** 2 / pb  # proxy: Price × BookValue/share
+            rows.append({
+                "code": code, "name": p["name"],
+                "close": p["close"], "market_cap": mv,
+                "market_cap_method": "B",
+            })
+        if rows:
+            rows.sort(key=lambda x: x["market_cap"], reverse=True)
+            for i, r in enumerate(rows, 1):
+                r["rank"] = i
+            print(f"  → [方法B] PBratio 代理估算 {len(rows)} 支，取前 {min(len(rows), TOP_N)} 大（⚠️ 非精確市值）")
+            return rows[:TOP_N]
+        print("  [WARN] Method B：BWIBBU 有資料但無股票通過篩選，嘗試 Method C…")
+    else:
+        print("  [WARN] Method B 資料不足，嘗試 Method C（交易金額排名）…")
+
+    # ── Method C：TradeValue 排名（最後備援）────────────────────────────
     rows = []
-
     for code, p in prices.items():
-        # 不在 t187ap03_L → 非上市普通股（ETF / 上櫃 / 其他），跳過
-        shares = total_shares.get(code, 0)
-        if shares <= 0:
+        tv = p.get("trade_value", 0)
+        if tv <= 0:
             continue
-
-        mv = p["close"] * shares  # 唯一計算方式：收盤價 × 總發行股數
         rows.append({
             "code": code, "name": p["name"],
-            "close": p["close"], "market_cap": mv,
-            "market_cap_method": "A",
+            "close": p["close"], "market_cap": tv,
+            "market_cap_method": "C",
         })
+    if rows:
+        rows.sort(key=lambda x: x["market_cap"], reverse=True)
+        for i, r in enumerate(rows, 1):
+            r["rank"] = i
+        print(f"  → [方法C] 交易金額排名 {len(rows)} 支，取前 {min(len(rows), TOP_N)} 大（⚠️ 僅供參考）")
+        return rows[:TOP_N]
 
-    rows.sort(key=lambda x: x["market_cap"], reverse=True)
-    for i, r in enumerate(rows, 1):
-        r["rank"] = i
-
-    print(f"  → t187ap03_L 上市普通股 {len(rows)} 支，取前 {min(len(rows), TOP_N)} 大")
-    return rows[:TOP_N]
+    print("  [ERROR] 所有市值估算方法均失敗")
+    return []
 
 
 # ══════════════════════════════════════════════════════
@@ -628,7 +705,7 @@ function flt(id,q){{
 
 def main():
     print("=" * 55)
-    print("台股 0050 成份股異動分析系統 v6.0")
+    print("台股 0050 成份股異動分析系統 v6.2")
     print(f"執行時間：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print("=" * 55)
 
@@ -639,7 +716,7 @@ def main():
     time.sleep(1)
     top100 = build_top100(prices)
     if not top100:
-        raise SystemExit("[ERROR] 市值計算失敗，程式終止")
+        raise SystemExit("[ERROR] 所有市值估算方法（A/B/C）均失敗，程式終止")
 
     time.sleep(1)
     comp0050 = fetch_0050()
