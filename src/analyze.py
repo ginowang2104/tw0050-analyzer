@@ -415,7 +415,8 @@ def build_top100(prices: dict) -> list[dict]:
 # Step 3：0050 成份股
 # ══════════════════════════════════════════════════════
 
-def fetch_0050() -> dict[str, str]:
+def fetch_0050() -> tuple[dict[str, str], str]:
+    """回傳 (成份股dict, 來源說明)。來源說明用於 HTML 顯示。"""
     print("[3/3] 抓取 0050 成份股…")
 
     # 只使用 TWSE 官方 ETF API（對 GitHub Actions 友善，不受反爬蟲封鎖）
@@ -439,20 +440,20 @@ def fetch_0050() -> dict[str, str]:
                     }
                     if len(result) >= 40:
                         print(f"  → TWSE ETF API ({d}) 取得 {len(result)} 檔")
-                        return result
+                        return result, f"TWSE ETF API（{d}）"
         except Exception as e:
             print(f"  [WARN] TWSE ETF API ({d})：{e}")
         time.sleep(0.3)
 
     print(f"  → TWSE API 無法取得，使用 hardcode 名單（{len(FALLBACK_0050)} 檔，資料日期：2026-05-08）")
-    return FALLBACK_0050.copy()
+    return FALLBACK_0050.copy(), "hardcode（最後更新：2026-05-08，元大投信）"
 
 
 # ══════════════════════════════════════════════════════
 # Step 4：異動分析
 # ══════════════════════════════════════════════════════
 
-def analyze(top100: list[dict], comp0050: dict[str, str]) -> dict:
+def analyze(top100: list[dict], comp0050: dict[str, str], comp_source: str = "") -> dict:
     rank_map   = {s["code"]: s["rank"] for s in top100}
     comp_codes = set(comp0050)
     additions, deletions = [], []
@@ -507,6 +508,7 @@ def analyze(top100: list[dict], comp0050: dict[str, str]) -> dict:
         "build_ts": int(datetime.now().timestamp()),   # 用於 HTML 強制刷新
         "top100": top100, "components": comp_list,
         "additions": additions, "deletions": deletions,
+        "comp_source": comp_source,
         "summary": {
             "top100_count": len(top100),
             "component_count": len(comp0050),
@@ -528,9 +530,11 @@ def fmt_cap(v: float) -> str:
 
 
 def build_html(result: dict) -> str:
-    updated  = result["updated_at"]
-    build_ts = result["build_ts"]
-    s        = result["summary"]
+    updated      = result["updated_at"]
+    build_ts     = result["build_ts"]
+    s            = result["summary"]
+    comp_source  = result.get("comp_source", "")
+    is_hardcode  = "hardcode" in comp_source
     adds     = result["additions"]
     dels     = result["deletions"]
     top100   = result["top100"]
@@ -650,7 +654,7 @@ footer a{color:#a0aec0}
 <header>
   <h1>📊 台股 0050 成份股異動分析</h1>
   <p>資料更新：{updated}　｜　Build：{build_ts}
-  <br>市值來源：TWSE STOCK_DAY_ALL（收盤價）× t187ap03_L（公司總發行股數）　｜　成份股來源：TWSE ETF API / hardcode</p>
+  <br>市值來源：TWSE STOCK_DAY_ALL（收盤價）× t187ap03_L（公司總發行股數）　｜　成份股來源：{comp_source}</p>
 </header>
 <div class="wrap">
   <div class="notice">
@@ -659,6 +663,7 @@ footer a{color:#a0aec0}
     市值排名<strong>落至 {DEL_THRESHOLD} 名之後</strong>且已在0050 → 可能踢除。
     每季（3/6/9/12月）正式審核，以富時羅素公告為準。
   </div>
+  {'<div class="notice" style="background:#fffbeb;border-left-color:#d97706;color:#92400e">⚠️ <strong>現有成份股資料來源：{comp_source}</strong>，非即時資料。TWSE API 不可用時自動啟用，成份股清單可能與最新不符，請留意。</div>' if is_hardcode else ''}
   <div class="grid">
     <div class="card"><div class="lbl">分析上市公司</div><div class="val">{s['top100_count']}</div></div>
     <div class="card"><div class="lbl">0050現有成份股</div><div class="val">{s['component_count']}</div></div>
@@ -745,8 +750,8 @@ def main():
         raise SystemExit("[ERROR] 所有市值估算方法（A/B/C）均失敗，程式終止")
 
     time.sleep(1)
-    comp0050 = fetch_0050()
-    result   = analyze(top100, comp0050)
+    comp0050, comp_source = fetch_0050()
+    result   = analyze(top100, comp0050, comp_source)
 
     out = Path(__file__).parent.parent / "docs"
     out.mkdir(parents=True, exist_ok=True)
