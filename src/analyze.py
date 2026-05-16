@@ -105,8 +105,9 @@ FALLBACK_0050 = {k: v[0] for k, v in LATEST_0050.items()}
 # 快取路徑（GitHub Actions 封鎖時，讀取上次成功的資料）
 CACHE_PATH        = Path(__file__).parent.parent / "docs" / ".cache_prices.json"
 CACHE_SHARES_PATH = Path(__file__).parent.parent / "docs" / ".cache_shares.json"
-# 發行股數快取版本：版本不符時強制重新抓取（v2 起已扣除庫藏股）
-CACHE_SHARES_VERSION = "v2-treasury-adj"
+# 發行股數快取版本：版本不符時強制重新抓取
+# v2 = 扣庫藏股；v3 = 加入全股/千股單位自動偵測
+CACHE_SHARES_VERSION = "v3-unit-autofix"
 # 成份股 CSV 路徑（可直接用 Excel / 文字編輯器更新，免改 Python）
 COMP_CSV_PATH = Path(__file__).parent.parent / "0050_components.csv"
 
@@ -329,11 +330,18 @@ def fetch_shares() -> dict[str, float]:
                     break
 
         if result:
-            # 簡易合理性檢查：台積電（2330）應有逾百億股
             tsmc = result.get("2330", 0)
+            # ── 合理性驗證：台積電實際流通約 259 億股（2.59×10¹⁰）──────────
+            # 情況 A：股數 < 10億  → 某欄位讀錯，資料不可用
             if tsmc > 0 and tsmc < 1_000_000_000:
-                print(f"  [WARN] 台積電股數異常（{tsmc:,}股），資料可能單位有誤，清除快取")
+                print(f"  [WARN] 台積電股數偏少（{tsmc:,}股），資料有誤，清除快取")
                 return load_shares_cache()
+            # 情況 B：股數 > 5000億 → API 已回傳全股（股），×1000 過度膨脹，自動 ÷1000
+            if tsmc > 500_000_000_000:
+                print(f"  [WARN] 台積電股數（{tsmc:,.0f}）偏多，"
+                      f"API 回傳單位為「股」而非「千股」，自動 ÷1000 修正…")
+                result = {k: round(v / 1000) for k, v in result.items()}
+                print(f"  [市值-A] 修正後台積電股數：{result.get('2330', 0):,.0f} 股")
             save_shares_cache(result)
             print(f"  [市值-A] t187ap03_L 取得 {len(result)} 支（已更新快取）")
         else:
