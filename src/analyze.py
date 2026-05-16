@@ -548,12 +548,21 @@ def build_html(result: dict) -> str:
                     'padding:2rem;color:#999">目前無異動建議</td></tr>')
         out = ""
         for c in changes:
-            b   = ('<span class="badge badge-add">▲ 列入 Add</span>'
-                   if c["type"] == "Add"
-                   else '<span class="badge badge-del">▼ 踢除 Del</span>')
+            strong = ((c["type"] == "Add"    and c["rank"] <= 40) or
+                      (c["type"] == "Delete" and c["rank"] >= 60))
+            if c["type"] == "Add":
+                b = ('<span class="badge badge-add-strong">▲ 強力列入 Add ★</span>'
+                     if strong else
+                     '<span class="badge badge-add">▲ 列入 Add</span>')
+                row_sty = ' style="background:#dcfce7"' if strong else ''
+            else:
+                b = ('<span class="badge badge-del-strong">▼ 強力踢除 Del ★</span>'
+                     if strong else
+                     '<span class="badge badge-del">▼ 踢除 Del</span>')
+                row_sty = ' style="background:#fee2e2"' if strong else ''
             r_s = f"#{c['rank']}" if c["rank"] < 999 else "#100+"
             cap = fmt_cap(c["market_cap"]) if c["market_cap"] else "—"
-            out += (f'<tr><td>{b}</td><td class="rank">{r_s}</td>'
+            out += (f'<tr{row_sty}><td>{b}</td><td class="rank">{r_s}</td>'
                     f'<td><span class="code">{c["code"]}</span></td>'
                     f'<td>{c["name"]}</td>'
                     f'<td style="text-align:right;font-family:monospace">{cap}</td>'
@@ -629,6 +638,8 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#f7fafc}
        padding:3px 8px;border-radius:99px;white-space:nowrap}
 .badge-add{background:var(--gb);color:var(--g);border:1px solid var(--ge)}
 .badge-del{background:var(--rb);color:var(--r);border:1px solid var(--re)}
+.badge-add-strong{background:var(--g);color:#fff;border:1px solid var(--g);font-weight:700}
+.badge-del-strong{background:var(--r);color:#fff;border:1px solid var(--r);font-weight:700}
 .badge-in{background:#e6fffa;color:var(--g);font-size:11px;padding:2px 6px;border-radius:99px}
 .rank{color:var(--b);font-weight:600;font-variant-numeric:tabular-nums}
 .code{font-family:monospace;font-size:12px;background:var(--bg);padding:2px 5px;border-radius:4px}
