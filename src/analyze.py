@@ -272,15 +272,29 @@ def fetch_shares() -> dict[str, float]:
             "普通股(千股)",
             "普通股(仟股)",
         ]
-        # 動態偵測：從實際欄位中找包含「普通股」與「股」的欄位
+        # 庫藏股欄位（已買回尚未銷除，應從發行股數中扣除）
+        TREASURY_KEYS = [
+            "庫藏股-普通股（千股）",
+            "庫藏股-普通股(千股)",
+            "庫藏股普通股（千股）",
+            "庫藏股普通股(千股)",
+            "庫藏股（千股）",
+            "庫藏股(千股)",
+        ]
+        # 動態偵測：從實際欄位中找包含「普通股」「庫藏股」與「股」的欄位
         for k in first_keys:
             if "普通股" in k and ("千股" in k or "仟股" in k or "股數" in k):
                 if k not in SHARES_KEYS:
                     SHARES_KEYS.insert(0, k)
                     print(f"  [除錯] 動態偵測到發行股數欄位：{k}")
+            if "庫藏股" in k and ("千股" in k or "仟股" in k):
+                if k not in TREASURY_KEYS:
+                    TREASURY_KEYS.insert(0, k)
+                    print(f"  [除錯] 動態偵測到庫藏股欄位：{k}")
 
         result = {}
         matched_key = None
+        treasury_key = None
         for row in data:
             code = str(row.get("公司代號", "")).strip()
             if not is_listed(code):
@@ -288,10 +302,22 @@ def fetch_shares() -> dict[str, float]:
             for k in SHARES_KEYS:
                 val = to_float(row.get(k, 0))
                 if val > 0:
-                    result[code] = val * 1000  # 千股 → 股
+                    total = val * 1000  # 千股 → 股
+                    # 扣除庫藏股，得到流通在外股數（更接近實際市值）
+                    treasury = 0.0
+                    for tk in TREASURY_KEYS:
+                        tv = to_float(row.get(tk, 0))
+                        if tv > 0:
+                            treasury = tv * 1000
+                            if treasury_key is None:
+                                treasury_key = tk
+                            break
+                    net = total - treasury if treasury > 0 else total
+                    result[code] = max(net, total * 0.01)  # 最少保留1%防止資料異常
                     if matched_key is None:
                         matched_key = k
-                        print(f"  [市值-A] 使用欄位：{k}")
+                        print(f"  [市值-A] 使用欄位：{k}"
+                              + (f"，庫藏股欄位：{treasury_key}" if treasury_key else "（無庫藏股資料）"))
                     break
 
         if result:
