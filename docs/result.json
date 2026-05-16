@@ -1,34 +1,104 @@
 {
-  "updated_at": "2026-05-16 07:46",
-  "build_ts": 1778917563,
+  "updated_at": "2026-05-16 07:59",
+  "build_ts": 1778918341,
   "top100": [
     {
-      "code": "3008",
-      "name": "大立光",
-      "close": 3445.0,
-      "market_cap": 4863944.672131147,
-      "market_cap_method": "B",
+      "code": "2330",
+      "name": "台積電",
+      "close": 2265.0,
+      "market_cap": 58737168040065.0,
+      "market_cap_method": "A",
       "rank": 1,
       "in_0050": true,
       "change": ""
     },
     {
-      "code": "6669",
-      "name": "緯穎",
-      "close": 5115.0,
-      "market_cap": 3858882.743362832,
-      "market_cap_method": "B",
+      "code": "2308",
+      "name": "台達電",
+      "close": 2075.0,
+      "market_cap": 5389902407675.0,
+      "market_cap_method": "A",
       "rank": 2,
       "in_0050": true,
       "change": ""
     },
     {
-      "code": "3661",
-      "name": "世芯-KY",
-      "close": 4605.0,
-      "market_cap": 2437474.137931035,
-      "market_cap_method": "B",
+      "code": "2454",
+      "name": "聯發科",
+      "close": 3260.0,
+      "market_cap": 5228699026820.0,
+      "market_cap_method": "A",
       "rank": 3,
+      "in_0050": true,
+      "change": ""
+    },
+    {
+      "code": "2317",
+      "name": "鴻海",
+      "close": 248.5,
+      "market_cap": 3479845694951.5,
+      "market_cap_method": "A",
+      "rank": 4,
+      "in_0050": true,
+      "change": ""
+    },
+    {
+      "code": "3711",
+      "name": "日月光投控",
+      "close": 547.0,
+      "market_cap": 2440075695854.0,
+      "market_cap_method": "A",
+      "rank": 5,
+      "in_0050": true,
+      "change": ""
+    },
+    {
+      "code": "2383",
+      "name": "台光電",
+      "close": 4615.0,
+      "market_cap": 1653651941110.0,
+      "market_cap_method": "A",
+      "rank": 6,
+      "in_0050": true,
+      "change": ""
+    },
+    {
+      "code": "2345",
+      "name": "智邦",
+      "close": 2505.0,
+      "market_cap": 1405600331985.0,
+      "market_cap_method": "A",
+      "rank": 7,
+      "in_0050": true,
+      "change": ""
+    },
+    {
+      "code": "2303",
+      "name": "聯電",
+      "close": 110.0,
+      "market_cap": 1383468335700.0,
+      "market_cap_method": "A",
+      "rank": 8,
+      "in_0050": true,
+      "change": ""
+    },
+    {
+      "code": "2881",
+      "name": "富邦金",
+      "close": 96.1,
+      "market_cap": 1346107771887.2,
+      "market_cap_method": "A",
+      "rank": 9,
+      "in_0050": true,
+      "change": ""
+    },
+    {
+      "code": "3037",
+      "name": "欣興",
+      "close": 821.0,
+      "market_cap": 1293511112737.0,
+      "market_cap_method": "A",
+      "rank": 10,
       "in_0050": true,
       "change": ""
     },
@@ -36,139 +106,59 @@
       "code": "7769",
       "name": "鴻勁",
       "close": 6895.0,
-      "market_cap": 2403489.635995955,
-      "market_cap_method": "B",
-      "rank": 4,
-      "in_0050": true,
-      "change": ""
-    },
-    {
-      "code": "6515",
-      "name": "穎崴",
-      "close": 9780.0,
-      "market_cap": 1763104.1474654379,
-      "market_cap_method": "B",
-      "rank": 5,
-      "in_0050": false,
-      "change": "Add"
-    },
-    {
-      "code": "2059",
-      "name": "川湖",
-      "close": 4860.0,
-      "market_cap": 1607869.2988427503,
-      "market_cap_method": "B",
-      "rank": 6,
-      "in_0050": true,
-      "change": ""
-    },
-    {
-      "code": "3533",
-      "name": "嘉澤",
-      "close": 2330.0,
-      "market_cap": 870016.0256410256,
-      "market_cap_method": "B",
-      "rank": 7,
-      "in_0050": false,
-      "change": "Add"
-    },
-    {
-      "code": "2454",
-      "name": "聯發科",
-      "close": 3260.0,
-      "market_cap": 797269.3173293323,
-      "market_cap_method": "B",
-      "rank": 8,
-      "in_0050": true,
-      "change": ""
-    },
-    {
-      "code": "5269",
-      "name": "祥碩",
-      "close": 1455.0,
-      "market_cap": 725008.5616438356,
-      "market_cap_method": "B",
-      "rank": 9,
-      "in_0050": false,
-      "change": "Add"
-    },
-    {
-      "code": "2383",
-      "name": "台光電",
-      "close": 4615.0,
-      "market_cap": 617518.8460423311,
-      "market_cap_method": "B",
-      "rank": 10,
-      "in_0050": true,
-      "change": ""
-    },
-    {
-      "code": "3443",
-      "name": "創意",
-      "close": 4845.0,
-      "market_cap": 527269.204851752,
-      "market_cap_method": "B",
+      "market_cap": 1240617350000.0,
+      "market_cap_method": "A",
       "rank": 11,
-      "in_0050": false,
-      "change": "Add"
+      "in_0050": true,
+      "change": ""
     },
     {
-      "code": "2330",
-      "name": "台積電",
-      "close": 2265.0,
-      "market_cap": 514566.19859578734,
-      "market_cap_method": "B",
+      "code": "2382",
+      "name": "廣達",
+      "close": 306.0,
+      "market_cap": 1181963994192.0,
+      "market_cap_method": "A",
       "rank": 12,
       "in_0050": true,
       "change": ""
     },
     {
-      "code": "3665",
-      "name": "貿聯-KY",
-      "close": 2095.0,
-      "market_cap": 501030.2511415525,
-      "market_cap_method": "B",
+      "code": "2882",
+      "name": "國泰金",
+      "close": 77.9,
+      "market_cap": 1142731468971.2002,
+      "market_cap_method": "A",
       "rank": 13,
-      "in_0050": false,
-      "change": "Add"
+      "in_0050": true,
+      "change": ""
     },
     {
-      "code": "3653",
-      "name": "健策",
-      "close": 3465.0,
-      "market_cap": 500259.375,
-      "market_cap_method": "B",
+      "code": "2891",
+      "name": "中信金",
+      "close": 54.8,
+      "market_cap": 1078344366284.3999,
+      "market_cap_method": "A",
       "rank": 14,
       "in_0050": true,
       "change": ""
     },
     {
-      "code": "7750",
-      "name": "新代",
-      "close": 2555.0,
-      "market_cap": 406730.52959501557,
-      "market_cap_method": "B",
+      "code": "2408",
+      "name": "南亞科",
+      "close": 311.5,
+      "market_cap": 1074739135981.0,
+      "market_cap_method": "A",
       "rank": 15,
-      "in_0050": false,
-      "change": "Add"
+      "in_0050": true,
+      "change": ""
     },
     {
-      "code": "1590",
-      "name": "亞德客-KY",
-      "close": 1465.0,
-      "market_cap": 372608.50694444444,
-      "market_cap_method": "B",
+      "code": "2412",
+      "name": "中華電",
+      "close": 138.0,
+      "market_cap": 1070527623210.0,
+      "market_cap_method": "A",
       "rank": 16,
-      "in_0050": false,
-      "change": "Add"
-    },
-    {
-      "code": "2345",
-      "name": "智邦",
-      "close": 2505.0,
-      "market_cap": 292814.9790013999,
-      "market_cap_method": "B",
-      "rank": 17,
       "in_0050": true,
       "change": ""
     },
@@ -176,9 +166,149 @@
       "code": "3017",
       "name": "奇鋐",
       "close": 2455.0,
-      "market_cap": 282428.5379568885,
-      "market_cap_method": "B",
+      "market_cap": 962798971185.0,
+      "market_cap_method": "A",
+      "rank": 17,
+      "in_0050": true,
+      "change": ""
+    },
+    {
+      "code": "2360",
+      "name": "致茂",
+      "close": 2240.0,
+      "market_cap": 952550462080.0,
+      "market_cap_method": "A",
       "rank": 18,
+      "in_0050": true,
+      "change": ""
+    },
+    {
+      "code": "6669",
+      "name": "緯穎",
+      "close": 5115.0,
+      "market_cap": 950575645965.0,
+      "market_cap_method": "A",
+      "rank": 19,
+      "in_0050": true,
+      "change": ""
+    },
+    {
+      "code": "2327",
+      "name": "國巨*",
+      "close": 455.5,
+      "market_cap": 943552527962.0,
+      "market_cap_method": "A",
+      "rank": 20,
+      "in_0050": true,
+      "change": ""
+    },
+    {
+      "code": "2885",
+      "name": "元大金",
+      "close": 54.8,
+      "market_cap": 730547017040.7999,
+      "market_cap_method": "A",
+      "rank": 21,
+      "in_0050": true,
+      "change": ""
+    },
+    {
+      "code": "1303",
+      "name": "南亞",
+      "close": 85.3,
+      "market_cap": 676499081541.7,
+      "market_cap_method": "A",
+      "rank": 22,
+      "in_0050": true,
+      "change": ""
+    },
+    {
+      "code": "2368",
+      "name": "金像電",
+      "close": 1290.0,
+      "market_cap": 658583540040.0,
+      "market_cap_method": "A",
+      "rank": 23,
+      "in_0050": true,
+      "change": ""
+    },
+    {
+      "code": "3443",
+      "name": "創意",
+      "close": 4845.0,
+      "market_cap": 649287708795.0,
+      "market_cap_method": "A",
+      "rank": 24,
+      "in_0050": false,
+      "change": "Add"
+    },
+    {
+      "code": "2887",
+      "name": "台新新光金",
+      "close": 23.8,
+      "market_cap": 591820301674.0,
+      "market_cap_method": "A",
+      "rank": 25,
+      "in_0050": true,
+      "change": ""
+    },
+    {
+      "code": "2886",
+      "name": "兆豐金",
+      "close": 39.4,
+      "market_cap": 584435104310.7999,
+      "market_cap_method": "A",
+      "rank": 26,
+      "in_0050": true,
+      "change": ""
+    },
+    {
+      "code": "2344",
+      "name": "華邦電",
+      "close": 129.5,
+      "market_cap": 582750024993.5,
+      "market_cap_method": "A",
+      "rank": 27,
+      "in_0050": true,
+      "change": ""
+    },
+    {
+      "code": "2884",
+      "name": "玉山金",
+      "close": 31.95,
+      "market_cap": 516759300000.0,
+      "market_cap_method": "A",
+      "rank": 28,
+      "in_0050": true,
+      "change": ""
+    },
+    {
+      "code": "3653",
+      "name": "健策",
+      "close": 3465.0,
+      "market_cap": 508429162395.0,
+      "market_cap_method": "A",
+      "rank": 29,
+      "in_0050": true,
+      "change": ""
+    },
+    {
+      "code": "8046",
+      "name": "南電",
+      "close": 786.0,
+      "market_cap": 507886072782.0,
+      "market_cap_method": "A",
+      "rank": 30,
+      "in_0050": false,
+      "change": "Add"
+    },
+    {
+      "code": "6505",
+      "name": "台塑化",
+      "close": 51.3,
+      "market_cap": 488681730147.6,
+      "market_cap_method": "A",
+      "rank": 31,
       "in_0050": true,
       "change": ""
     },
@@ -186,649 +316,129 @@
       "code": "2357",
       "name": "華碩",
       "close": 641.0,
-      "market_cap": 247518.6746987952,
-      "market_cap_method": "B",
-      "rank": 19,
-      "in_0050": true,
-      "change": ""
-    },
-    {
-      "code": "6781",
-      "name": "AES-KY",
-      "close": 1160.0,
-      "market_cap": 245547.44525547442,
-      "market_cap_method": "B",
-      "rank": 20,
-      "in_0050": false,
-      "change": "Add"
-    },
-    {
-      "code": "2308",
-      "name": "台達電",
-      "close": 2075.0,
-      "market_cap": 239334.35241801004,
-      "market_cap_method": "B",
-      "rank": 21,
-      "in_0050": true,
-      "change": ""
-    },
-    {
-      "code": "6805",
-      "name": "富世達",
-      "close": 1735.0,
-      "market_cap": 187904.18227215981,
-      "market_cap_method": "B",
-      "rank": 22,
-      "in_0050": false,
-      "change": "Add"
-    },
-    {
-      "code": "6442",
-      "name": "光聖",
-      "close": 1740.0,
-      "market_cap": 157523.41311134235,
-      "market_cap_method": "B",
-      "rank": 23,
-      "in_0050": false,
-      "change": "Add"
-    },
-    {
-      "code": "7822",
-      "name": "倍利科",
-      "close": 1155.0,
-      "market_cap": 154044.4572748268,
-      "market_cap_method": "B",
-      "rank": 24,
-      "in_0050": false,
-      "change": "Add"
-    },
-    {
-      "code": "2360",
-      "name": "致茂",
-      "close": 2240.0,
-      "market_cap": 146670.56416252558,
-      "market_cap_method": "B",
-      "rank": 25,
-      "in_0050": true,
-      "change": ""
-    },
-    {
-      "code": "8210",
-      "name": "勤誠",
-      "close": 1410.0,
-      "market_cap": 141905.78158458244,
-      "market_cap_method": "B",
-      "rank": 26,
-      "in_0050": false,
-      "change": "Add"
-    },
-    {
-      "code": "3406",
-      "name": "玉晶光",
-      "close": 588.0,
-      "market_cap": 136119.6850393701,
-      "market_cap_method": "B",
-      "rank": 27,
-      "in_0050": false,
-      "change": "Add"
-    },
-    {
-      "code": "6944",
-      "name": "兆聯實業",
-      "close": 897.0,
-      "market_cap": 103686.72680412371,
-      "market_cap_method": "B",
-      "rank": 28,
-      "in_0050": false,
-      "change": "Add"
-    },
-    {
-      "code": "4583",
-      "name": "台灣精銳",
-      "close": 774.0,
-      "market_cap": 93314.01869158879,
-      "market_cap_method": "B",
-      "rank": 29,
-      "in_0050": false,
-      "change": "Add"
-    },
-    {
-      "code": "2368",
-      "name": "金像電",
-      "close": 1290.0,
-      "market_cap": 87954.54545454544,
-      "market_cap_method": "B",
-      "rank": 30,
-      "in_0050": true,
-      "change": ""
-    },
-    {
-      "code": "3583",
-      "name": "辛耘",
-      "close": 888.0,
-      "market_cap": 84426.55246252677,
-      "market_cap_method": "B",
-      "rank": 31,
-      "in_0050": false,
-      "change": "Add"
-    },
-    {
-      "code": "6409",
-      "name": "旭隼",
-      "close": 716.0,
-      "market_cap": 84318.42105263157,
-      "market_cap_method": "B",
+      "market_cap": 476109339480.0,
+      "market_cap_method": "A",
       "rank": 32,
-      "in_0050": false,
-      "change": "Add"
+      "in_0050": true,
+      "change": ""
     },
     {
-      "code": "6531",
-      "name": "愛普*",
-      "close": 1080.0,
-      "market_cap": 78334.4526527871,
-      "market_cap_method": "B",
+      "code": "2301",
+      "name": "光寶科",
+      "close": 204.5,
+      "market_cap": 473780643533.5,
+      "market_cap_method": "A",
       "rank": 33,
-      "in_0050": false,
-      "change": "Add"
+      "in_0050": true,
+      "change": ""
     },
     {
-      "code": "6446",
-      "name": "藥華藥",
-      "close": 826.0,
-      "market_cap": 76488.34080717489,
-      "market_cap_method": "B",
+      "code": "2059",
+      "name": "川湖",
+      "close": 4860.0,
+      "market_cap": 463143769920.0,
+      "market_cap_method": "A",
       "rank": 34,
-      "in_0050": false,
-      "change": "Add"
+      "in_0050": true,
+      "change": ""
     },
     {
-      "code": "2404",
-      "name": "漢唐",
-      "close": 1000.0,
-      "market_cap": 76161.46230007616,
-      "market_cap_method": "B",
+      "code": "2880",
+      "name": "華南金",
+      "close": 32.4,
+      "market_cap": 450909668883.6,
+      "market_cap_method": "A",
       "rank": 35,
-      "in_0050": false,
-      "change": "Add"
+      "in_0050": true,
+      "change": ""
     },
     {
-      "code": "6526",
-      "name": "達發",
-      "close": 688.0,
-      "market_cap": 73614.9300155521,
-      "market_cap_method": "B",
+      "code": "3008",
+      "name": "大立光",
+      "close": 3445.0,
+      "market_cap": 450599788665.0,
+      "market_cap_method": "A",
       "rank": 36,
-      "in_0050": false,
-      "change": "Add"
+      "in_0050": true,
+      "change": ""
     },
     {
-      "code": "3563",
-      "name": "牧德",
-      "close": 875.0,
-      "market_cap": 71287.24394785847,
-      "market_cap_method": "B",
+      "code": "2890",
+      "name": "永豐金",
+      "close": 30.2,
+      "market_cap": 437668132705.0,
+      "market_cap_method": "A",
       "rank": 37,
-      "in_0050": false,
-      "change": "Add"
-    },
-    {
-      "code": "2207",
-      "name": "和泰車",
-      "close": 468.0,
-      "market_cap": 66572.6443768997,
-      "market_cap_method": "B",
-      "rank": 38,
       "in_0050": true,
-      "change": ""
-    },
-    {
-      "code": "6139",
-      "name": "亞翔",
-      "close": 693.0,
-      "market_cap": 64376.54155495979,
-      "market_cap_method": "B",
-      "rank": 39,
-      "in_0050": false,
-      "change": "Add"
-    },
-    {
-      "code": "3037",
-      "name": "欣興",
-      "close": 821.0,
-      "market_cap": 58612.260869565216,
-      "market_cap_method": "B",
-      "rank": 40,
-      "in_0050": true,
-      "change": ""
-    },
-    {
-      "code": "6414",
-      "name": "樺漢",
-      "close": 319.5,
-      "market_cap": 57672.457627118645,
-      "market_cap_method": "B",
-      "rank": 41,
-      "in_0050": false,
-      "change": "Add"
-    },
-    {
-      "code": "8499",
-      "name": "鼎炫-KY",
-      "close": 276.0,
-      "market_cap": 57275.18796992481,
-      "market_cap_method": "B",
-      "rank": 42,
-      "in_0050": false,
-      "change": "Add"
-    },
-    {
-      "code": "8046",
-      "name": "南電",
-      "close": 786.0,
-      "market_cap": 56834.95860165594,
-      "market_cap_method": "B",
-      "rank": 43,
-      "in_0050": false,
-      "change": ""
-    },
-    {
-      "code": "3034",
-      "name": "聯詠",
-      "close": 466.5,
-      "market_cap": 55094.24050632911,
-      "market_cap_method": "B",
-      "rank": 44,
-      "in_0050": false,
       "change": ""
     },
     {
       "code": "2603",
       "name": "長榮",
       "close": 200.5,
-      "market_cap": 53600.333333333336,
-      "market_cap_method": "B",
-      "rank": 45,
+      "market_cap": 434091120698.0,
+      "market_cap_method": "A",
+      "rank": 38,
       "in_0050": true,
       "change": ""
     },
     {
-      "code": "3044",
-      "name": "健鼎",
-      "close": 477.5,
-      "market_cap": 53024.70930232558,
-      "market_cap_method": "B",
-      "rank": 46,
-      "in_0050": false,
+      "code": "3231",
+      "name": "緯創",
+      "close": 135.5,
+      "market_cap": 430945859875.0,
+      "market_cap_method": "A",
+      "rank": 39,
+      "in_0050": true,
       "change": ""
     },
     {
-      "code": "8996",
-      "name": "高力",
-      "close": 1040.0,
-      "market_cap": 51950.04803073967,
-      "market_cap_method": "B",
-      "rank": 47,
-      "in_0050": false,
+      "code": "1216",
+      "name": "統一",
+      "close": 75.7,
+      "market_cap": 430128567369.7,
+      "market_cap_method": "A",
+      "rank": 40,
+      "in_0050": true,
       "change": ""
     },
     {
       "code": "4958",
       "name": "臻鼎-KY",
       "close": 401.0,
-      "market_cap": 47155.718475073314,
-      "market_cap_method": "B",
-      "rank": 48,
+      "market_cap": 429309860556.0,
+      "market_cap_method": "A",
+      "rank": 41,
       "in_0050": false,
-      "change": ""
+      "change": "Add"
     },
     {
-      "code": "2379",
-      "name": "瑞昱",
-      "close": 536.0,
-      "market_cap": 47020.621931260226,
-      "market_cap_method": "B",
-      "rank": 49,
-      "in_0050": false,
-      "change": ""
-    },
-    {
-      "code": "2474",
-      "name": "可成",
-      "close": 185.0,
-      "market_cap": 46883.561643835616,
-      "market_cap_method": "B",
-      "rank": 50,
-      "in_0050": false,
-      "change": ""
-    },
-    {
-      "code": "3413",
-      "name": "京鼎",
-      "close": 325.5,
-      "market_cap": 46674.11894273128,
-      "market_cap_method": "B",
-      "rank": 51,
-      "in_0050": false,
-      "change": ""
-    },
-    {
-      "code": "6415",
-      "name": "矽力*-KY",
-      "close": 468.0,
-      "market_cap": 46013.445378151264,
-      "market_cap_method": "B",
-      "rank": 52,
-      "in_0050": false,
-      "change": ""
-    },
-    {
-      "code": "6830",
-      "name": "汎銓",
-      "close": 735.0,
-      "market_cap": 44426.39802631579,
-      "market_cap_method": "B",
-      "rank": 53,
-      "in_0050": false,
-      "change": ""
-    },
-    {
-      "code": "3711",
-      "name": "日月光投控",
-      "close": 547.0,
-      "market_cap": 43680.14598540146,
-      "market_cap_method": "B",
-      "rank": 54,
+      "code": "3045",
+      "name": "台灣大",
+      "close": 114.5,
+      "market_cap": 426313477359.5,
+      "market_cap_method": "A",
+      "rank": 42,
       "in_0050": true,
       "change": ""
     },
     {
-      "code": "6491",
-      "name": "晶碩",
-      "close": 294.5,
-      "market_cap": 42514.828431372545,
-      "market_cap_method": "B",
-      "rank": 55,
-      "in_0050": false,
-      "change": ""
-    },
-    {
-      "code": "2049",
-      "name": "上銀",
-      "close": 392.5,
-      "market_cap": 41636.82432432432,
-      "market_cap_method": "B",
-      "rank": 56,
-      "in_0050": false,
-      "change": ""
-    },
-    {
-      "code": "7610",
-      "name": "聯友金屬-創",
-      "close": 948.0,
-      "market_cap": 41414.930875576036,
-      "market_cap_method": "B",
-      "rank": 57,
-      "in_0050": false,
-      "change": ""
-    },
-    {
-      "code": "7749",
-      "name": "意騰-KY",
-      "close": 488.0,
-      "market_cap": 41344.444444444445,
-      "market_cap_method": "B",
-      "rank": 58,
-      "in_0050": false,
-      "change": ""
-    },
-    {
-      "code": "7722",
-      "name": "LINEPAY",
-      "close": 259.0,
-      "market_cap": 41153.98773006135,
-      "market_cap_method": "B",
-      "rank": 59,
-      "in_0050": false,
-      "change": ""
-    },
-    {
-      "code": "6472",
-      "name": "保瑞",
-      "close": 353.0,
-      "market_cap": 40326.53721682848,
-      "market_cap_method": "B",
-      "rank": 60,
-      "in_0050": false,
-      "change": ""
-    },
-    {
-      "code": "4766",
-      "name": "南寶",
-      "close": 369.5,
-      "market_cap": 40038.196480938415,
-      "market_cap_method": "B",
-      "rank": 61,
-      "in_0050": false,
-      "change": ""
-    },
-    {
-      "code": "5434",
-      "name": "崇越",
-      "close": 403.0,
-      "market_cap": 40002.21674876848,
-      "market_cap_method": "B",
-      "rank": 62,
-      "in_0050": false,
-      "change": ""
-    },
-    {
-      "code": "3189",
-      "name": "景碩",
-      "close": 486.0,
-      "market_cap": 39830.69139966273,
-      "market_cap_method": "B",
-      "rank": 63,
-      "in_0050": false,
-      "change": ""
-    },
-    {
-      "code": "6451",
-      "name": "訊芯-KY",
-      "close": 577.0,
-      "market_cap": 38092.56292906179,
-      "market_cap_method": "B",
-      "rank": 64,
-      "in_0050": false,
-      "change": ""
-    },
-    {
-      "code": "2327",
-      "name": "國巨*",
-      "close": 455.5,
-      "market_cap": 36984.001782531195,
-      "market_cap_method": "B",
-      "rank": 65,
+      "code": "2892",
+      "name": "第一金",
+      "close": 29.3,
+      "market_cap": 421318431445.0,
+      "market_cap_method": "A",
+      "rank": 43,
       "in_0050": true,
-      "change": "Delete"
-    },
-    {
-      "code": "1560",
-      "name": "中砂",
-      "close": 642.0,
-      "market_cap": 35500.77519379845,
-      "market_cap_method": "B",
-      "rank": 66,
-      "in_0050": false,
       "change": ""
     },
     {
-      "code": "3592",
-      "name": "瑞鼎",
-      "close": 248.5,
-      "market_cap": 35287.0,
-      "market_cap_method": "B",
-      "rank": 67,
-      "in_0050": false,
-      "change": ""
-    },
-    {
-      "code": "6789",
-      "name": "采鈺",
-      "close": 587.0,
-      "market_cap": 34910.739614994935,
-      "market_cap_method": "B",
-      "rank": 68,
-      "in_0050": false,
-      "change": ""
-    },
-    {
-      "code": "1476",
-      "name": "儒鴻",
-      "close": 339.5,
-      "market_cap": 34000.073746312686,
-      "market_cap_method": "B",
-      "rank": 69,
-      "in_0050": false,
-      "change": ""
-    },
-    {
-      "code": "6196",
-      "name": "帆宣",
-      "close": 403.5,
-      "market_cap": 31986.68958742633,
-      "market_cap_method": "B",
-      "rank": 70,
-      "in_0050": false,
-      "change": ""
-    },
-    {
-      "code": "6670",
-      "name": "復盛應用",
-      "close": 263.0,
-      "market_cap": 31875.115207373274,
-      "market_cap_method": "B",
-      "rank": 71,
-      "in_0050": false,
-      "change": ""
-    },
-    {
-      "code": "2247",
-      "name": "汎德永業",
-      "close": 207.0,
-      "market_cap": 31739.999999999996,
-      "market_cap_method": "B",
-      "rank": 72,
-      "in_0050": false,
-      "change": ""
-    },
-    {
-      "code": "2317",
-      "name": "鴻海",
-      "close": 248.5,
-      "market_cap": 31667.82051282051,
-      "market_cap_method": "B",
-      "rank": 73,
-      "in_0050": true,
-      "change": "Delete"
-    },
-    {
-      "code": "2376",
-      "name": "技嘉",
-      "close": 326.5,
-      "market_cap": 31446.091445427726,
-      "market_cap_method": "B",
-      "rank": 74,
-      "in_0050": false,
-      "change": ""
-    },
-    {
-      "code": "2467",
-      "name": "志聖",
-      "close": 587.0,
-      "market_cap": 31296.003633060853,
-      "market_cap_method": "B",
-      "rank": 75,
-      "in_0050": false,
-      "change": ""
-    },
-    {
-      "code": "6691",
-      "name": "洋基工程",
-      "close": 628.0,
-      "market_cap": 31005.031446540877,
-      "market_cap_method": "B",
-      "rank": 76,
-      "in_0050": false,
-      "change": ""
-    },
-    {
-      "code": "3167",
-      "name": "大量",
-      "close": 735.0,
-      "market_cap": 29715.346534653465,
-      "market_cap_method": "B",
-      "rank": 77,
-      "in_0050": false,
-      "change": ""
-    },
-    {
-      "code": "8464",
-      "name": "億豐",
-      "close": 315.0,
-      "market_cap": 29356.508875739644,
-      "market_cap_method": "B",
-      "rank": 78,
-      "in_0050": false,
-      "change": ""
-    },
-    {
-      "code": "6831",
-      "name": "邁科",
-      "close": 725.0,
-      "market_cap": 28738.381629305633,
-      "market_cap_method": "B",
-      "rank": 79,
-      "in_0050": false,
-      "change": ""
-    },
-    {
-      "code": "6949",
-      "name": "沛爾生醫-創",
-      "close": 687.0,
-      "market_cap": 27877.67277023036,
-      "market_cap_method": "B",
-      "rank": 80,
-      "in_0050": false,
-      "change": ""
-    },
-    {
-      "code": "6719",
-      "name": "力智",
-      "close": 200.0,
-      "market_cap": 27210.884353741498,
-      "market_cap_method": "B",
-      "rank": 81,
-      "in_0050": false,
-      "change": ""
-    },
-    {
-      "code": "5284",
-      "name": "jpp-KY",
-      "close": 376.5,
-      "market_cap": 27207.725527831095,
-      "market_cap_method": "B",
-      "rank": 82,
-      "in_0050": false,
-      "change": ""
-    },
-    {
-      "code": "8016",
-      "name": "矽創",
-      "close": 274.0,
-      "market_cap": 26717.437722419927,
-      "market_cap_method": "B",
-      "rank": 83,
+      "code": "3665",
+      "name": "貿聯-KY",
+      "close": 2095.0,
+      "market_cap": 408689258475.0,
+      "market_cap_method": "A",
+      "rank": 44,
       "in_0050": false,
       "change": ""
     },
@@ -836,39 +446,69 @@
       "code": "2395",
       "name": "研華",
       "close": 459.5,
-      "market_cap": 26261.225124378114,
-      "market_cap_method": "B",
-      "rank": 84,
+      "market_cap": 397848997577.5,
+      "market_cap_method": "A",
+      "rank": 45,
       "in_0050": true,
-      "change": "Delete"
-    },
-    {
-      "code": "6715",
-      "name": "嘉基",
-      "close": 479.0,
-      "market_cap": 26102.502844141072,
-      "market_cap_method": "B",
-      "rank": 85,
-      "in_0050": false,
       "change": ""
     },
     {
-      "code": "7711",
-      "name": "永擎",
-      "close": 383.0,
-      "market_cap": 25378.71972318339,
-      "market_cap_method": "B",
-      "rank": 86,
-      "in_0050": false,
+      "code": "3661",
+      "name": "世芯-KY",
+      "close": 4605.0,
+      "market_cap": 378030620700.0,
+      "market_cap_method": "A",
+      "rank": 46,
+      "in_0050": true,
       "change": ""
     },
     {
-      "code": "4961",
-      "name": "天鈺",
-      "close": 169.0,
-      "market_cap": 24835.652173913044,
-      "market_cap_method": "B",
-      "rank": 87,
+      "code": "2883",
+      "name": "凱基金",
+      "close": 21.85,
+      "market_cap": 370900407824.0,
+      "market_cap_method": "A",
+      "rank": 47,
+      "in_0050": true,
+      "change": ""
+    },
+    {
+      "code": "2449",
+      "name": "京元電子",
+      "close": 299.5,
+      "market_cap": 366212146967.5,
+      "market_cap_method": "A",
+      "rank": 48,
+      "in_0050": true,
+      "change": ""
+    },
+    {
+      "code": "5880",
+      "name": "合庫金",
+      "close": 22.85,
+      "market_cap": 358309408484.9,
+      "market_cap_method": "A",
+      "rank": 49,
+      "in_0050": true,
+      "change": ""
+    },
+    {
+      "code": "4904",
+      "name": "遠傳",
+      "close": 98.3,
+      "market_cap": 354570592593.1,
+      "market_cap_method": "A",
+      "rank": 50,
+      "in_0050": true,
+      "change": ""
+    },
+    {
+      "code": "6515",
+      "name": "穎崴",
+      "close": 9780.0,
+      "market_cap": 352487258760.0,
+      "market_cap_method": "A",
+      "rank": 51,
       "in_0050": false,
       "change": ""
     },
@@ -876,109 +516,139 @@
       "code": "3036",
       "name": "文曄",
       "close": 270.0,
-      "market_cap": 24059.40594059406,
-      "market_cap_method": "B",
-      "rank": 88,
+      "market_cap": 341666302770.0,
+      "market_cap_method": "A",
+      "rank": 52,
       "in_0050": false,
       "change": ""
     },
     {
-      "code": "4585",
-      "name": "達明",
-      "close": 354.0,
-      "market_cap": 23249.721706864566,
-      "market_cap_method": "B",
-      "rank": 89,
+      "code": "2337",
+      "name": "旺宏",
+      "close": 162.5,
+      "market_cap": 321962683250.0,
+      "market_cap_method": "A",
+      "rank": 53,
       "in_0050": false,
       "change": ""
     },
     {
-      "code": "4967",
-      "name": "十銓",
-      "close": 276.0,
-      "market_cap": 23083.636363636364,
-      "market_cap_method": "B",
-      "rank": 90,
+      "code": "6446",
+      "name": "藥華藥",
+      "close": 826.0,
+      "market_cap": 313805139620.0,
+      "market_cap_method": "A",
+      "rank": 54,
       "in_0050": false,
       "change": ""
     },
     {
-      "code": "4770",
-      "name": "上品",
-      "close": 226.5,
-      "market_cap": 22902.790178571428,
-      "market_cap_method": "B",
-      "rank": 91,
+      "code": "1590",
+      "name": "亞德客-KY",
+      "close": 1465.0,
+      "market_cap": 292999997070.0,
+      "market_cap_method": "A",
+      "rank": 55,
       "in_0050": false,
       "change": ""
     },
     {
-      "code": "2492",
-      "name": "華新科",
-      "close": 206.0,
-      "market_cap": 22693.048128342245,
-      "market_cap_method": "B",
-      "rank": 92,
+      "code": "1301",
+      "name": "台塑",
+      "close": 45.7,
+      "market_cap": 290914353691.7,
+      "market_cap_method": "A",
+      "rank": 56,
+      "in_0050": true,
+      "change": ""
+    },
+    {
+      "code": "3481",
+      "name": "群創",
+      "close": 36.1,
+      "market_cap": 288410023865.7,
+      "market_cap_method": "A",
+      "rank": 57,
       "in_0050": false,
       "change": ""
     },
     {
-      "code": "6271",
-      "name": "同欣電",
-      "close": 177.0,
-      "market_cap": 22377.857142857145,
-      "market_cap_method": "B",
-      "rank": 93,
+      "code": "2002",
+      "name": "中鋼",
+      "close": 18.15,
+      "market_cap": 285587727095.55,
+      "market_cap_method": "A",
+      "rank": 58,
+      "in_0050": true,
+      "change": "Delete"
+    },
+    {
+      "code": "3034",
+      "name": "聯詠",
+      "close": 466.5,
+      "market_cap": 283870600288.5,
+      "market_cap_method": "A",
+      "rank": 59,
       "in_0050": false,
       "change": ""
     },
     {
-      "code": "7799",
-      "name": "禾榮科",
-      "close": 305.0,
-      "market_cap": 21939.858490566035,
-      "market_cap_method": "B",
-      "rank": 94,
+      "code": "2313",
+      "name": "華通",
+      "close": 235.5,
+      "market_cap": 280673748709.5,
+      "market_cap_method": "A",
+      "rank": 60,
       "in_0050": false,
       "change": ""
     },
     {
-      "code": "2072",
-      "name": "世紀風電",
-      "close": 180.0,
-      "market_cap": 21891.891891891893,
-      "market_cap_method": "B",
-      "rank": 95,
+      "code": "2379",
+      "name": "瑞昱",
+      "close": 536.0,
+      "market_cap": 276314775576.0,
+      "market_cap_method": "A",
+      "rank": 61,
       "in_0050": false,
       "change": ""
     },
     {
-      "code": "8081",
-      "name": "致新",
-      "close": 255.5,
-      "market_cap": 21615.976821192053,
-      "market_cap_method": "B",
-      "rank": 96,
+      "code": "6770",
+      "name": "力積電",
+      "close": 62.8,
+      "market_cap": 266510873302.0,
+      "market_cap_method": "A",
+      "rank": 62,
       "in_0050": false,
       "change": ""
     },
     {
-      "code": "8114",
-      "name": "振樺電",
-      "close": 216.0,
-      "market_cap": 21500.460829493088,
-      "market_cap_method": "B",
-      "rank": 97,
+      "code": "3533",
+      "name": "嘉澤",
+      "close": 2330.0,
+      "market_cap": 262205830030.0,
+      "market_cap_method": "A",
+      "rank": 63,
       "in_0050": false,
       "change": ""
     },
     {
-      "code": "3708",
-      "name": "上緯投控",
-      "close": 113.5,
-      "market_cap": 21470.416666666668,
-      "market_cap_method": "B",
-      "rank": 98,
+      "code": "2207",
+      "name": "和泰車",
+      "close": 468.0,
+      "market_cap": 260724095424.0,
+      "market_cap_method": "A",
+      "rank": 64,
+      "in_0050": true,
+      "change": "Delete"
+    },
+    {
+      "code": "1326",
+      "name": "台化",
+      "close": 44.45,
+      "market_cap": 260529730634.95,
+      "market_cap_method": "A",
+      "rank": 65,
       "in_0050": false,
       "change": ""
     },
@@ -986,18 +656,348 @@
       "code": "1519",
       "name": "華城",
       "close": 823.0,
-      "market_cap": 21461.62864385298,
-      "market_cap_method": "B",
+      "market_cap": 259969934612.0,
+      "market_cap_method": "A",
+      "rank": 66,
+      "in_0050": false,
+      "change": ""
+    },
+    {
+      "code": "3189",
+      "name": "景碩",
+      "close": 486.0,
+      "market_cap": 256086016560.0,
+      "market_cap_method": "A",
+      "rank": 67,
+      "in_0050": false,
+      "change": ""
+    },
+    {
+      "code": "3044",
+      "name": "健鼎",
+      "close": 477.5,
+      "market_cap": 250976816295.0,
+      "market_cap_method": "A",
+      "rank": 68,
+      "in_0050": false,
+      "change": ""
+    },
+    {
+      "code": "2801",
+      "name": "彰銀",
+      "close": 20.25,
+      "market_cap": 238262436623.25,
+      "market_cap_method": "A",
+      "rank": 69,
+      "in_0050": false,
+      "change": ""
+    },
+    {
+      "code": "2912",
+      "name": "統一超",
+      "close": 227.5,
+      "market_cap": 236514063012.5,
+      "market_cap_method": "A",
+      "rank": 70,
+      "in_0050": false,
+      "change": ""
+    },
+    {
+      "code": "2376",
+      "name": "技嘉",
+      "close": 326.5,
+      "market_cap": 218718721279.0,
+      "market_cap_method": "A",
+      "rank": 71,
+      "in_0050": false,
+      "change": ""
+    },
+    {
+      "code": "2615",
+      "name": "萬海",
+      "close": 74.2,
+      "market_cap": 208216054940.6,
+      "market_cap_method": "A",
+      "rank": 72,
+      "in_0050": false,
+      "change": ""
+    },
+    {
+      "code": "4938",
+      "name": "和碩",
+      "close": 76.5,
+      "market_cap": 205185630379.5,
+      "market_cap_method": "A",
+      "rank": 73,
+      "in_0050": false,
+      "change": ""
+    },
+    {
+      "code": "5876",
+      "name": "上海商銀",
+      "close": 40.1,
+      "market_cap": 194950285914.0,
+      "market_cap_method": "A",
+      "rank": 74,
+      "in_0050": false,
+      "change": ""
+    },
+    {
+      "code": "2404",
+      "name": "漢唐",
+      "close": 1000.0,
+      "market_cap": 190586698000.0,
+      "market_cap_method": "A",
+      "rank": 75,
+      "in_0050": false,
+      "change": ""
+    },
+    {
+      "code": "1802",
+      "name": "台玻",
+      "close": 65.0,
+      "market_cap": 189023952000.0,
+      "market_cap_method": "A",
+      "rank": 76,
+      "in_0050": false,
+      "change": ""
+    },
+    {
+      "code": "6239",
+      "name": "力成",
+      "close": 248.0,
+      "market_cap": 188268365232.0,
+      "market_cap_method": "A",
+      "rank": 77,
+      "in_0050": false,
+      "change": ""
+    },
+    {
+      "code": "2356",
+      "name": "英業達",
+      "close": 52.2,
+      "market_cap": 187266198445.2,
+      "market_cap_method": "A",
+      "rank": 78,
+      "in_0050": false,
+      "change": ""
+    },
+    {
+      "code": "2618",
+      "name": "長榮航",
+      "close": 34.65,
+      "market_cap": 187125396207.75,
+      "market_cap_method": "A",
+      "rank": 79,
+      "in_0050": false,
+      "change": ""
+    },
+    {
+      "code": "6789",
+      "name": "采鈺",
+      "close": 587.0,
+      "market_cap": 186841582853.0,
+      "market_cap_method": "A",
+      "rank": 80,
+      "in_0050": false,
+      "change": ""
+    },
+    {
+      "code": "3702",
+      "name": "大聯大",
+      "close": 110.0,
+      "market_cap": 184696251630.0,
+      "market_cap_method": "A",
+      "rank": 81,
+      "in_0050": false,
+      "change": ""
+    },
+    {
+      "code": "7750",
+      "name": "新代",
+      "close": 2555.0,
+      "market_cap": 183558865000.0,
+      "market_cap_method": "A",
+      "rank": 82,
+      "in_0050": false,
+      "change": ""
+    },
+    {
+      "code": "6415",
+      "name": "矽力*-KY",
+      "close": 468.0,
+      "market_cap": 182027714076.0,
+      "market_cap_method": "A",
+      "rank": 83,
+      "in_0050": false,
+      "change": ""
+    },
+    {
+      "code": "5871",
+      "name": "中租-KY",
+      "close": 106.0,
+      "market_cap": 181410643066.0,
+      "market_cap_method": "A",
+      "rank": 84,
+      "in_0050": false,
+      "change": ""
+    },
+    {
+      "code": "1101",
+      "name": "台泥",
+      "close": 24.1,
+      "market_cap": 181308679982.2,
+      "market_cap_method": "A",
+      "rank": 85,
+      "in_0050": false,
+      "change": ""
+    },
+    {
+      "code": "8210",
+      "name": "勤誠",
+      "close": 1410.0,
+      "market_cap": 176699995860.0,
+      "market_cap_method": "A",
+      "rank": 86,
+      "in_0050": false,
+      "change": ""
+    },
+    {
+      "code": "6531",
+      "name": "愛普*",
+      "close": 1080.0,
+      "market_cap": 175724134560.0,
+      "market_cap_method": "A",
+      "rank": 87,
+      "in_0050": false,
+      "change": ""
+    },
+    {
+      "code": "2609",
+      "name": "陽明",
+      "close": 48.05,
+      "market_cap": 167795610173.5,
+      "market_cap_method": "A",
+      "rank": 88,
+      "in_0050": false,
+      "change": ""
+    },
+    {
+      "code": "1504",
+      "name": "東元",
+      "close": 69.4,
+      "market_cap": 164924983469.6,
+      "market_cap_method": "A",
+      "rank": 89,
+      "in_0050": false,
+      "change": ""
+    },
+    {
+      "code": "6139",
+      "name": "亞翔",
+      "close": 693.0,
+      "market_cap": 163253976732.0,
+      "market_cap_method": "A",
+      "rank": 90,
+      "in_0050": false,
+      "change": ""
+    },
+    {
+      "code": "1605",
+      "name": "華新",
+      "close": 34.9,
+      "market_cap": 154653519885.19998,
+      "market_cap_method": "A",
+      "rank": 91,
+      "in_0050": false,
+      "change": ""
+    },
+    {
+      "code": "2834",
+      "name": "臺企銀",
+      "close": 15.9,
+      "market_cap": 154517183399.1,
+      "market_cap_method": "A",
+      "rank": 92,
+      "in_0050": false,
+      "change": ""
+    },
+    {
+      "code": "6919",
+      "name": "康霈*",
+      "close": 96.1,
+      "market_cap": 149653441346.0,
+      "market_cap_method": "A",
+      "rank": 93,
+      "in_0050": true,
+      "change": "Delete"
+    },
+    {
+      "code": "2451",
+      "name": "創見",
+      "close": 336.0,
+      "market_cap": 144712738800.0,
+      "market_cap_method": "A",
+      "rank": 94,
+      "in_0050": false,
+      "change": ""
+    },
+    {
+      "code": "2633",
+      "name": "台灣高鐵",
+      "close": 25.7,
+      "market_cap": 144647131590.6,
+      "market_cap_method": "A",
+      "rank": 95,
+      "in_0050": false,
+      "change": ""
+    },
+    {
+      "code": "2409",
+      "name": "友達",
+      "close": 19.05,
+      "market_cap": 143772235416.6,
+      "market_cap_method": "A",
+      "rank": 96,
+      "in_0050": false,
+      "change": ""
+    },
+    {
+      "code": "1402",
+      "name": "遠東新",
+      "close": 26.45,
+      "market_cap": 141583549754.15,
+      "market_cap_method": "A",
+      "rank": 97,
+      "in_0050": false,
+      "change": ""
+    },
+    {
+      "code": "2049",
+      "name": "上銀",
+      "close": 392.5,
+      "market_cap": 138863454200.0,
+      "market_cap_method": "A",
+      "rank": 98,
+      "in_0050": false,
+      "change": ""
+    },
+    {
+      "code": "2347",
+      "name": "聯強",
+      "close": 82.4,
+      "market_cap": 137438830163.20001,
+      "market_cap_method": "A",
       "rank": 99,
       "in_0050": false,
       "change": ""
     },
     {
-      "code": "1256",
-      "name": "鮮活果汁-KY",
-      "close": 179.5,
-      "market_cap": 20922.240259740258,
-      "market_cap_method": "B",
+      "code": "6442",
+      "name": "光聖",
+      "close": 1740.0,
+      "market_cap": 135847521120.0,
+      "market_cap_method": "A",
       "rank": 100,
       "in_0050": false,
       "change": ""
@@ -1005,863 +1005,463 @@
   ],
   "components": [
     {
-      "code": "3008",
-      "name": "大立光",
-      "rank": 1,
-      "weight": 0.27,
-      "market_cap": 4863944.672131147,
-      "change": ""
-    },
-    {
-      "code": "6669",
-      "name": "緯穎",
-      "rank": 2,
-      "weight": 0.6,
-      "market_cap": 3858882.743362832,
-      "change": ""
-    },
-    {
-      "code": "3661",
-      "name": "世芯-KY",
-      "rank": 3,
-      "weight": 0.46,
-      "market_cap": 2437474.137931035,
-      "change": ""
-    },
-    {
-      "code": "7769",
-      "name": "鴻勁",
-      "rank": 4,
-      "weight": 0.39,
-      "market_cap": 2403489.635995955,
-      "change": ""
-    },
-    {
-      "code": "2059",
-      "name": "川湖",
-      "rank": 6,
-      "weight": 0.34,
-      "market_cap": 1607869.2988427503,
-      "change": ""
-    },
-    {
-      "code": "2454",
-      "name": "聯發科",
-      "rank": 8,
-      "weight": 6.21,
-      "market_cap": 797269.3173293323,
-      "change": ""
-    },
-    {
-      "code": "2383",
-      "name": "台光電",
-      "rank": 10,
-      "weight": 1.51,
-      "market_cap": 617518.8460423311,
-      "change": ""
-    },
-    {
       "code": "2330",
       "name": "台積電",
-      "rank": 12,
+      "rank": 1,
       "weight": 59.36,
-      "market_cap": 514566.19859578734,
-      "change": ""
-    },
-    {
-      "code": "3653",
-      "name": "健策",
-      "rank": 14,
-      "weight": 0.37,
-      "market_cap": 500259.375,
-      "change": ""
-    },
-    {
-      "code": "2345",
-      "name": "智邦",
-      "rank": 17,
-      "weight": 1.4,
-      "market_cap": 292814.9790013999,
-      "change": ""
-    },
-    {
-      "code": "3017",
-      "name": "奇鋐",
-      "rank": 18,
-      "weight": 0.9,
-      "market_cap": 282428.5379568885,
-      "change": ""
-    },
-    {
-      "code": "2357",
-      "name": "華碩",
-      "rank": 19,
-      "weight": 0.51,
-      "market_cap": 247518.6746987952,
+      "market_cap": 58737168040065.0,
       "change": ""
     },
     {
       "code": "2308",
       "name": "台達電",
-      "rank": 21,
+      "rank": 2,
       "weight": 4.74,
-      "market_cap": 239334.35241801004,
+      "market_cap": 5389902407675.0,
       "change": ""
     },
     {
-      "code": "2360",
-      "name": "致茂",
-      "rank": 25,
-      "weight": 0.95,
-      "market_cap": 146670.56416252558,
+      "code": "2454",
+      "name": "聯發科",
+      "rank": 3,
+      "weight": 6.21,
+      "market_cap": 5228699026820.0,
       "change": ""
     },
     {
-      "code": "2368",
-      "name": "金像電",
-      "rank": 30,
-      "weight": 0.52,
-      "market_cap": 87954.54545454544,
-      "change": ""
-    },
-    {
-      "code": "2207",
-      "name": "和泰車",
-      "rank": 38,
-      "weight": 0.14,
-      "market_cap": 66572.6443768997,
-      "change": ""
-    },
-    {
-      "code": "3037",
-      "name": "欣興",
-      "rank": 40,
-      "weight": 1.25,
-      "market_cap": 58612.260869565216,
-      "change": ""
-    },
-    {
-      "code": "2603",
-      "name": "長榮",
-      "rank": 45,
-      "weight": 0.25,
-      "market_cap": 53600.333333333336,
+      "code": "2317",
+      "name": "鴻海",
+      "rank": 4,
+      "weight": 3.34,
+      "market_cap": 3479845694951.5,
       "change": ""
     },
     {
       "code": "3711",
       "name": "日月光投控",
-      "rank": 54,
+      "rank": 5,
       "weight": 1.92,
-      "market_cap": 43680.14598540146,
+      "market_cap": 2440075695854.0,
+      "change": ""
+    },
+    {
+      "code": "2383",
+      "name": "台光電",
+      "rank": 6,
+      "weight": 1.51,
+      "market_cap": 1653651941110.0,
+      "change": ""
+    },
+    {
+      "code": "2345",
+      "name": "智邦",
+      "rank": 7,
+      "weight": 1.4,
+      "market_cap": 1405600331985.0,
+      "change": ""
+    },
+    {
+      "code": "2303",
+      "name": "聯電",
+      "rank": 8,
+      "weight": 1.2,
+      "market_cap": 1383468335700.0,
+      "change": ""
+    },
+    {
+      "code": "2881",
+      "name": "富邦金",
+      "rank": 9,
+      "weight": 0.86,
+      "market_cap": 1346107771887.2,
+      "change": ""
+    },
+    {
+      "code": "3037",
+      "name": "欣興",
+      "rank": 10,
+      "weight": 1.25,
+      "market_cap": 1293511112737.0,
+      "change": ""
+    },
+    {
+      "code": "7769",
+      "name": "鴻勁",
+      "rank": 11,
+      "weight": 0.39,
+      "market_cap": 1240617350000.0,
+      "change": ""
+    },
+    {
+      "code": "2382",
+      "name": "廣達",
+      "rank": 12,
+      "weight": 0.99,
+      "market_cap": 1181963994192.0,
+      "change": ""
+    },
+    {
+      "code": "2882",
+      "name": "國泰金",
+      "rank": 13,
+      "weight": 0.8,
+      "market_cap": 1142731468971.2002,
+      "change": ""
+    },
+    {
+      "code": "2891",
+      "name": "中信金",
+      "rank": 14,
+      "weight": 1.07,
+      "market_cap": 1078344366284.3999,
+      "change": ""
+    },
+    {
+      "code": "2408",
+      "name": "南亞科",
+      "rank": 15,
+      "weight": 0.37,
+      "market_cap": 1074739135981.0,
+      "change": ""
+    },
+    {
+      "code": "2412",
+      "name": "中華電",
+      "rank": 16,
+      "weight": 0.56,
+      "market_cap": 1070527623210.0,
+      "change": ""
+    },
+    {
+      "code": "3017",
+      "name": "奇鋐",
+      "rank": 17,
+      "weight": 0.9,
+      "market_cap": 962798971185.0,
+      "change": ""
+    },
+    {
+      "code": "2360",
+      "name": "致茂",
+      "rank": 18,
+      "weight": 0.95,
+      "market_cap": 952550462080.0,
+      "change": ""
+    },
+    {
+      "code": "6669",
+      "name": "緯穎",
+      "rank": 19,
+      "weight": 0.6,
+      "market_cap": 950575645965.0,
       "change": ""
     },
     {
       "code": "2327",
       "name": "國巨",
-      "rank": 65,
+      "rank": 20,
       "weight": 0.66,
-      "market_cap": 36984.001782531195,
-      "change": "Delete"
-    },
-    {
-      "code": "2317",
-      "name": "鴻海",
-      "rank": 73,
-      "weight": 3.34,
-      "market_cap": 31667.82051282051,
-      "change": "Delete"
-    },
-    {
-      "code": "2395",
-      "name": "研華",
-      "rank": 84,
-      "weight": 0.24,
-      "market_cap": 26261.225124378114,
-      "change": "Delete"
-    },
-    {
-      "code": "2303",
-      "name": "聯電",
-      "rank": 999,
-      "weight": 1.2,
-      "market_cap": 0,
-      "change": "Delete"
-    },
-    {
-      "code": "2891",
-      "name": "中信金",
-      "rank": 999,
-      "weight": 1.07,
-      "market_cap": 0,
-      "change": "Delete"
-    },
-    {
-      "code": "2382",
-      "name": "廣達",
-      "rank": 999,
-      "weight": 0.99,
-      "market_cap": 0,
-      "change": "Delete"
-    },
-    {
-      "code": "2881",
-      "name": "富邦金",
-      "rank": 999,
-      "weight": 0.86,
-      "market_cap": 0,
-      "change": "Delete"
-    },
-    {
-      "code": "2882",
-      "name": "國泰金",
-      "rank": 999,
-      "weight": 0.8,
-      "market_cap": 0,
-      "change": "Delete"
+      "market_cap": 943552527962.0,
+      "change": ""
     },
     {
       "code": "2885",
       "name": "元大金",
-      "rank": 999,
+      "rank": 21,
       "weight": 0.67,
-      "market_cap": 0,
-      "change": "Delete"
-    },
-    {
-      "code": "2887",
-      "name": "台新新光金",
-      "rank": 999,
-      "weight": 0.59,
-      "market_cap": 0,
-      "change": "Delete"
-    },
-    {
-      "code": "2412",
-      "name": "中華電",
-      "rank": 999,
-      "weight": 0.56,
-      "market_cap": 0,
-      "change": "Delete"
-    },
-    {
-      "code": "2884",
-      "name": "玉山金",
-      "rank": 999,
-      "weight": 0.54,
-      "market_cap": 0,
-      "change": "Delete"
-    },
-    {
-      "code": "2886",
-      "name": "兆豐金",
-      "rank": 999,
-      "weight": 0.51,
-      "market_cap": 0,
-      "change": "Delete"
+      "market_cap": 730547017040.7999,
+      "change": ""
     },
     {
       "code": "1303",
       "name": "南亞",
-      "rank": 999,
+      "rank": 22,
       "weight": 0.49,
-      "market_cap": 0,
-      "change": "Delete"
+      "market_cap": 676499081541.7,
+      "change": ""
     },
     {
-      "code": "2301",
-      "name": "光寶科",
-      "rank": 999,
-      "weight": 0.47,
-      "market_cap": 0,
-      "change": "Delete"
+      "code": "2368",
+      "name": "金像電",
+      "rank": 23,
+      "weight": 0.52,
+      "market_cap": 658583540040.0,
+      "change": ""
     },
     {
-      "code": "3231",
-      "name": "緯創",
-      "rank": 999,
-      "weight": 0.46,
-      "market_cap": 0,
-      "change": "Delete"
+      "code": "2887",
+      "name": "台新新光金",
+      "rank": 25,
+      "weight": 0.59,
+      "market_cap": 591820301674.0,
+      "change": ""
     },
     {
-      "code": "2890",
-      "name": "永豐金",
-      "rank": 999,
-      "weight": 0.42,
-      "market_cap": 0,
-      "change": "Delete"
+      "code": "2886",
+      "name": "兆豐金",
+      "rank": 26,
+      "weight": 0.51,
+      "market_cap": 584435104310.7999,
+      "change": ""
     },
     {
       "code": "2344",
       "name": "華邦電",
-      "rank": 999,
+      "rank": 27,
       "weight": 0.4,
-      "market_cap": 0,
-      "change": "Delete"
+      "market_cap": 582750024993.5,
+      "change": ""
     },
     {
-      "code": "1216",
-      "name": "統一",
-      "rank": 999,
-      "weight": 0.39,
-      "market_cap": 0,
-      "change": "Delete"
+      "code": "2884",
+      "name": "玉山金",
+      "rank": 28,
+      "weight": 0.54,
+      "market_cap": 516759300000.0,
+      "change": ""
     },
     {
-      "code": "2883",
-      "name": "凱基金",
-      "rank": 999,
-      "weight": 0.39,
-      "market_cap": 0,
-      "change": "Delete"
-    },
-    {
-      "code": "2408",
-      "name": "南亞科",
-      "rank": 999,
+      "code": "3653",
+      "name": "健策",
+      "rank": 29,
       "weight": 0.37,
-      "market_cap": 0,
-      "change": "Delete"
+      "market_cap": 508429162395.0,
+      "change": ""
     },
     {
-      "code": "2449",
-      "name": "京元電子",
-      "rank": 999,
-      "weight": 0.35,
-      "market_cap": 0,
-      "change": "Delete"
+      "code": "6505",
+      "name": "台塑化",
+      "rank": 31,
+      "weight": 0.07,
+      "market_cap": 488681730147.6,
+      "change": ""
     },
     {
-      "code": "2892",
-      "name": "第一金",
-      "rank": 999,
-      "weight": 0.35,
-      "market_cap": 0,
-      "change": "Delete"
+      "code": "2357",
+      "name": "華碩",
+      "rank": 32,
+      "weight": 0.51,
+      "market_cap": 476109339480.0,
+      "change": ""
+    },
+    {
+      "code": "2301",
+      "name": "光寶科",
+      "rank": 33,
+      "weight": 0.47,
+      "market_cap": 473780643533.5,
+      "change": ""
+    },
+    {
+      "code": "2059",
+      "name": "川湖",
+      "rank": 34,
+      "weight": 0.34,
+      "market_cap": 463143769920.0,
+      "change": ""
     },
     {
       "code": "2880",
       "name": "華南金",
-      "rank": 999,
+      "rank": 35,
       "weight": 0.34,
-      "market_cap": 0,
-      "change": "Delete"
+      "market_cap": 450909668883.6,
+      "change": ""
     },
     {
-      "code": "5880",
-      "name": "合庫金",
-      "rank": 999,
-      "weight": 0.26,
-      "market_cap": 0,
-      "change": "Delete"
+      "code": "3008",
+      "name": "大立光",
+      "rank": 36,
+      "weight": 0.27,
+      "market_cap": 450599788665.0,
+      "change": ""
     },
     {
-      "code": "2002",
-      "name": "中鋼",
-      "rank": 999,
-      "weight": 0.23,
-      "market_cap": 0,
-      "change": "Delete"
+      "code": "2890",
+      "name": "永豐金",
+      "rank": 37,
+      "weight": 0.42,
+      "market_cap": 437668132705.0,
+      "change": ""
     },
     {
-      "code": "1301",
-      "name": "台塑",
-      "rank": 999,
-      "weight": 0.22,
-      "market_cap": 0,
-      "change": "Delete"
+      "code": "2603",
+      "name": "長榮",
+      "rank": 38,
+      "weight": 0.25,
+      "market_cap": 434091120698.0,
+      "change": ""
     },
     {
-      "code": "4904",
-      "name": "遠傳",
-      "rank": 999,
-      "weight": 0.19,
-      "market_cap": 0,
-      "change": "Delete"
+      "code": "3231",
+      "name": "緯創",
+      "rank": 39,
+      "weight": 0.46,
+      "market_cap": 430945859875.0,
+      "change": ""
+    },
+    {
+      "code": "1216",
+      "name": "統一",
+      "rank": 40,
+      "weight": 0.39,
+      "market_cap": 430128567369.7,
+      "change": ""
     },
     {
       "code": "3045",
       "name": "台灣大",
-      "rank": 999,
+      "rank": 42,
       "weight": 0.17,
-      "market_cap": 0,
+      "market_cap": 426313477359.5,
+      "change": ""
+    },
+    {
+      "code": "2892",
+      "name": "第一金",
+      "rank": 43,
+      "weight": 0.35,
+      "market_cap": 421318431445.0,
+      "change": ""
+    },
+    {
+      "code": "2395",
+      "name": "研華",
+      "rank": 45,
+      "weight": 0.24,
+      "market_cap": 397848997577.5,
+      "change": ""
+    },
+    {
+      "code": "3661",
+      "name": "世芯-KY",
+      "rank": 46,
+      "weight": 0.46,
+      "market_cap": 378030620700.0,
+      "change": ""
+    },
+    {
+      "code": "2883",
+      "name": "凱基金",
+      "rank": 47,
+      "weight": 0.39,
+      "market_cap": 370900407824.0,
+      "change": ""
+    },
+    {
+      "code": "2449",
+      "name": "京元電子",
+      "rank": 48,
+      "weight": 0.35,
+      "market_cap": 366212146967.5,
+      "change": ""
+    },
+    {
+      "code": "5880",
+      "name": "合庫金",
+      "rank": 49,
+      "weight": 0.26,
+      "market_cap": 358309408484.9,
+      "change": ""
+    },
+    {
+      "code": "4904",
+      "name": "遠傳",
+      "rank": 50,
+      "weight": 0.19,
+      "market_cap": 354570592593.1,
+      "change": ""
+    },
+    {
+      "code": "1301",
+      "name": "台塑",
+      "rank": 56,
+      "weight": 0.22,
+      "market_cap": 290914353691.7,
+      "change": ""
+    },
+    {
+      "code": "2002",
+      "name": "中鋼",
+      "rank": 58,
+      "weight": 0.23,
+      "market_cap": 285587727095.55,
+      "change": "Delete"
+    },
+    {
+      "code": "2207",
+      "name": "和泰車",
+      "rank": 64,
+      "weight": 0.14,
+      "market_cap": 260724095424.0,
       "change": "Delete"
     },
     {
       "code": "6919",
       "name": "康霈",
-      "rank": 999,
+      "rank": 93,
       "weight": 0.11,
-      "market_cap": 0,
-      "change": "Delete"
-    },
-    {
-      "code": "6505",
-      "name": "台塑化",
-      "rank": 999,
-      "weight": 0.07,
-      "market_cap": 0,
+      "market_cap": 149653441346.0,
       "change": "Delete"
     }
   ],
   "additions": [
     {
       "type": "Add",
-      "rank": 5,
-      "code": "6515",
-      "name": "穎崴",
-      "market_cap": 1763104.1474654379,
-      "reason": "市值排名第5，尚未在0050"
-    },
-    {
-      "type": "Add",
-      "rank": 7,
-      "code": "3533",
-      "name": "嘉澤",
-      "market_cap": 870016.0256410256,
-      "reason": "市值排名第7，尚未在0050"
-    },
-    {
-      "type": "Add",
-      "rank": 9,
-      "code": "5269",
-      "name": "祥碩",
-      "market_cap": 725008.5616438356,
-      "reason": "市值排名第9，尚未在0050"
-    },
-    {
-      "type": "Add",
-      "rank": 11,
+      "rank": 24,
       "code": "3443",
       "name": "創意",
-      "market_cap": 527269.204851752,
-      "reason": "市值排名第11，尚未在0050"
-    },
-    {
-      "type": "Add",
-      "rank": 13,
-      "code": "3665",
-      "name": "貿聯-KY",
-      "market_cap": 501030.2511415525,
-      "reason": "市值排名第13，尚未在0050"
-    },
-    {
-      "type": "Add",
-      "rank": 15,
-      "code": "7750",
-      "name": "新代",
-      "market_cap": 406730.52959501557,
-      "reason": "市值排名第15，尚未在0050"
-    },
-    {
-      "type": "Add",
-      "rank": 16,
-      "code": "1590",
-      "name": "亞德客-KY",
-      "market_cap": 372608.50694444444,
-      "reason": "市值排名第16，尚未在0050"
-    },
-    {
-      "type": "Add",
-      "rank": 20,
-      "code": "6781",
-      "name": "AES-KY",
-      "market_cap": 245547.44525547442,
-      "reason": "市值排名第20，尚未在0050"
-    },
-    {
-      "type": "Add",
-      "rank": 22,
-      "code": "6805",
-      "name": "富世達",
-      "market_cap": 187904.18227215981,
-      "reason": "市值排名第22，尚未在0050"
-    },
-    {
-      "type": "Add",
-      "rank": 23,
-      "code": "6442",
-      "name": "光聖",
-      "market_cap": 157523.41311134235,
-      "reason": "市值排名第23，尚未在0050"
-    },
-    {
-      "type": "Add",
-      "rank": 24,
-      "code": "7822",
-      "name": "倍利科",
-      "market_cap": 154044.4572748268,
+      "market_cap": 649287708795.0,
       "reason": "市值排名第24，尚未在0050"
     },
     {
       "type": "Add",
-      "rank": 26,
-      "code": "8210",
-      "name": "勤誠",
-      "market_cap": 141905.78158458244,
-      "reason": "市值排名第26，尚未在0050"
-    },
-    {
-      "type": "Add",
-      "rank": 27,
-      "code": "3406",
-      "name": "玉晶光",
-      "market_cap": 136119.6850393701,
-      "reason": "市值排名第27，尚未在0050"
-    },
-    {
-      "type": "Add",
-      "rank": 28,
-      "code": "6944",
-      "name": "兆聯實業",
-      "market_cap": 103686.72680412371,
-      "reason": "市值排名第28，尚未在0050"
-    },
-    {
-      "type": "Add",
-      "rank": 29,
-      "code": "4583",
-      "name": "台灣精銳",
-      "market_cap": 93314.01869158879,
-      "reason": "市值排名第29，尚未在0050"
-    },
-    {
-      "type": "Add",
-      "rank": 31,
-      "code": "3583",
-      "name": "辛耘",
-      "market_cap": 84426.55246252677,
-      "reason": "市值排名第31，尚未在0050"
-    },
-    {
-      "type": "Add",
-      "rank": 32,
-      "code": "6409",
-      "name": "旭隼",
-      "market_cap": 84318.42105263157,
-      "reason": "市值排名第32，尚未在0050"
-    },
-    {
-      "type": "Add",
-      "rank": 33,
-      "code": "6531",
-      "name": "愛普*",
-      "market_cap": 78334.4526527871,
-      "reason": "市值排名第33，尚未在0050"
-    },
-    {
-      "type": "Add",
-      "rank": 34,
-      "code": "6446",
-      "name": "藥華藥",
-      "market_cap": 76488.34080717489,
-      "reason": "市值排名第34，尚未在0050"
-    },
-    {
-      "type": "Add",
-      "rank": 35,
-      "code": "2404",
-      "name": "漢唐",
-      "market_cap": 76161.46230007616,
-      "reason": "市值排名第35，尚未在0050"
-    },
-    {
-      "type": "Add",
-      "rank": 36,
-      "code": "6526",
-      "name": "達發",
-      "market_cap": 73614.9300155521,
-      "reason": "市值排名第36，尚未在0050"
-    },
-    {
-      "type": "Add",
-      "rank": 37,
-      "code": "3563",
-      "name": "牧德",
-      "market_cap": 71287.24394785847,
-      "reason": "市值排名第37，尚未在0050"
-    },
-    {
-      "type": "Add",
-      "rank": 39,
-      "code": "6139",
-      "name": "亞翔",
-      "market_cap": 64376.54155495979,
-      "reason": "市值排名第39，尚未在0050"
+      "rank": 30,
+      "code": "8046",
+      "name": "南電",
+      "market_cap": 507886072782.0,
+      "reason": "市值排名第30，尚未在0050"
     },
     {
       "type": "Add",
       "rank": 41,
-      "code": "6414",
-      "name": "樺漢",
-      "market_cap": 57672.457627118645,
+      "code": "4958",
+      "name": "臻鼎-KY",
+      "market_cap": 429309860556.0,
       "reason": "市值排名第41，尚未在0050"
-    },
-    {
-      "type": "Add",
-      "rank": 42,
-      "code": "8499",
-      "name": "鼎炫-KY",
-      "market_cap": 57275.18796992481,
-      "reason": "市值排名第42，尚未在0050"
     }
   ],
   "deletions": [
     {
       "type": "Delete",
-      "rank": 65,
-      "code": "2327",
-      "name": "國巨",
-      "market_cap": 36984.001782531195,
-      "reason": "市值排名第65（≥57觸發）"
-    },
-    {
-      "type": "Delete",
-      "rank": 73,
-      "code": "2317",
-      "name": "鴻海",
-      "market_cap": 31667.82051282051,
-      "reason": "市值排名第73（≥57觸發）"
-    },
-    {
-      "type": "Delete",
-      "rank": 84,
-      "code": "2395",
-      "name": "研華",
-      "market_cap": 26261.225124378114,
-      "reason": "市值排名第84（≥57觸發）"
-    },
-    {
-      "type": "Delete",
-      "rank": 999,
-      "code": "2303",
-      "name": "聯電",
-      "market_cap": 0,
-      "reason": "市值排名已落出前100"
-    },
-    {
-      "type": "Delete",
-      "rank": 999,
-      "code": "2891",
-      "name": "中信金",
-      "market_cap": 0,
-      "reason": "市值排名已落出前100"
-    },
-    {
-      "type": "Delete",
-      "rank": 999,
-      "code": "2382",
-      "name": "廣達",
-      "market_cap": 0,
-      "reason": "市值排名已落出前100"
-    },
-    {
-      "type": "Delete",
-      "rank": 999,
-      "code": "2881",
-      "name": "富邦金",
-      "market_cap": 0,
-      "reason": "市值排名已落出前100"
-    },
-    {
-      "type": "Delete",
-      "rank": 999,
-      "code": "2882",
-      "name": "國泰金",
-      "market_cap": 0,
-      "reason": "市值排名已落出前100"
-    },
-    {
-      "type": "Delete",
-      "rank": 999,
-      "code": "2885",
-      "name": "元大金",
-      "market_cap": 0,
-      "reason": "市值排名已落出前100"
-    },
-    {
-      "type": "Delete",
-      "rank": 999,
-      "code": "2887",
-      "name": "台新新光金",
-      "market_cap": 0,
-      "reason": "市值排名已落出前100"
-    },
-    {
-      "type": "Delete",
-      "rank": 999,
-      "code": "2412",
-      "name": "中華電",
-      "market_cap": 0,
-      "reason": "市值排名已落出前100"
-    },
-    {
-      "type": "Delete",
-      "rank": 999,
-      "code": "2884",
-      "name": "玉山金",
-      "market_cap": 0,
-      "reason": "市值排名已落出前100"
-    },
-    {
-      "type": "Delete",
-      "rank": 999,
-      "code": "2886",
-      "name": "兆豐金",
-      "market_cap": 0,
-      "reason": "市值排名已落出前100"
-    },
-    {
-      "type": "Delete",
-      "rank": 999,
-      "code": "1303",
-      "name": "南亞",
-      "market_cap": 0,
-      "reason": "市值排名已落出前100"
-    },
-    {
-      "type": "Delete",
-      "rank": 999,
-      "code": "2301",
-      "name": "光寶科",
-      "market_cap": 0,
-      "reason": "市值排名已落出前100"
-    },
-    {
-      "type": "Delete",
-      "rank": 999,
-      "code": "3231",
-      "name": "緯創",
-      "market_cap": 0,
-      "reason": "市值排名已落出前100"
-    },
-    {
-      "type": "Delete",
-      "rank": 999,
-      "code": "2890",
-      "name": "永豐金",
-      "market_cap": 0,
-      "reason": "市值排名已落出前100"
-    },
-    {
-      "type": "Delete",
-      "rank": 999,
-      "code": "2344",
-      "name": "華邦電",
-      "market_cap": 0,
-      "reason": "市值排名已落出前100"
-    },
-    {
-      "type": "Delete",
-      "rank": 999,
-      "code": "1216",
-      "name": "統一",
-      "market_cap": 0,
-      "reason": "市值排名已落出前100"
-    },
-    {
-      "type": "Delete",
-      "rank": 999,
-      "code": "2883",
-      "name": "凱基金",
-      "market_cap": 0,
-      "reason": "市值排名已落出前100"
-    },
-    {
-      "type": "Delete",
-      "rank": 999,
-      "code": "2408",
-      "name": "南亞科",
-      "market_cap": 0,
-      "reason": "市值排名已落出前100"
-    },
-    {
-      "type": "Delete",
-      "rank": 999,
-      "code": "2449",
-      "name": "京元電子",
-      "market_cap": 0,
-      "reason": "市值排名已落出前100"
-    },
-    {
-      "type": "Delete",
-      "rank": 999,
-      "code": "2892",
-      "name": "第一金",
-      "market_cap": 0,
-      "reason": "市值排名已落出前100"
-    },
-    {
-      "type": "Delete",
-      "rank": 999,
-      "code": "2880",
-      "name": "華南金",
-      "market_cap": 0,
-      "reason": "市值排名已落出前100"
-    },
-    {
-      "type": "Delete",
-      "rank": 999,
-      "code": "5880",
-      "name": "合庫金",
-      "market_cap": 0,
-      "reason": "市值排名已落出前100"
-    },
-    {
-      "type": "Delete",
-      "rank": 999,
+      "rank": 58,
       "code": "2002",
       "name": "中鋼",
-      "market_cap": 0,
-      "reason": "市值排名已落出前100"
+      "market_cap": 285587727095.55,
+      "reason": "市值排名第58（≥57觸發）"
     },
     {
       "type": "Delete",
-      "rank": 999,
-      "code": "1301",
-      "name": "台塑",
-      "market_cap": 0,
-      "reason": "市值排名已落出前100"
+      "rank": 64,
+      "code": "2207",
+      "name": "和泰車",
+      "market_cap": 260724095424.0,
+      "reason": "市值排名第64（≥57觸發）"
     },
     {
       "type": "Delete",
-      "rank": 999,
-      "code": "4904",
-      "name": "遠傳",
-      "market_cap": 0,
-      "reason": "市值排名已落出前100"
-    },
-    {
-      "type": "Delete",
-      "rank": 999,
-      "code": "3045",
-      "name": "台灣大",
-      "market_cap": 0,
-      "reason": "市值排名已落出前100"
-    },
-    {
-      "type": "Delete",
-      "rank": 999,
+      "rank": 93,
       "code": "6919",
       "name": "康霈",
-      "market_cap": 0,
-      "reason": "市值排名已落出前100"
-    },
-    {
-      "type": "Delete",
-      "rank": 999,
-      "code": "6505",
-      "name": "台塑化",
-      "market_cap": 0,
-      "reason": "市值排名已落出前100"
+      "market_cap": 149653441346.0,
+      "reason": "市值排名第93（≥57觸發）"
     }
   ],
   "comp_source": "本地CSV（最後更新：2026-05-16）",
   "summary": {
     "top100_count": 100,
     "component_count": 50,
-    "add_count": 25,
-    "del_count": 31
+    "add_count": 3,
+    "del_count": 3
   }
 }
