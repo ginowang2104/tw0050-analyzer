@@ -1,5 +1,5 @@
 """
-台股 0050 成份股異動分析系統 v6.2
+台股 0050 成份股異動分析系統 v6.3
 ─────────────────────────────────────────────────────────
 修正項目：
   1. 0050 hardcode 更新為 2026-05-08 最新資料（50檔）
@@ -13,6 +13,8 @@
      t187ap03_L 欄位動態偵測 + 合理性驗證
      市值計算加入 Method B（PBratio）/ Method C（TradeValue）備援，
      避免 t187ap03_L 失敗時 exit code 1
+  7. [v6.3] 異動分析加入預估買進／賣出張數
+     考慮目前股價、0050規模（AUM = Σ股價×持倉股數）、預估成份股權重
 
 市值計算優先順序：
   方法 A：ClosingPrice × t187ap03_L 總發行股數（正確市值）
@@ -503,9 +505,12 @@ def fetch_0050(csv_data: dict | None = None) -> tuple[dict[str, str], str]:
 # ══════════════════════════════════════════════════════
 
 def analyze(top100: list[dict], comp0050: dict[str, str], comp_source: str = "",
-            comp_data: dict | None = None) -> dict:
+            comp_data: dict | None = None, prices: dict | None = None) -> dict:
     _comp_data = comp_data if comp_data else LATEST_0050
+    _prices    = prices or {}
     rank_map   = {s["code"]: s["rank"] for s in top100}
+    close_map  = {s["code"]: s["close"] for s in top100}
+    mv_map     = {s["code"]: s["market_cap"] for s in top100}
     comp_codes = set(comp0050)
     additions, deletions = [], []
 
@@ -539,6 +544,46 @@ def analyze(top100: list[dict], comp0050: dict[str, str], comp_source: str = "",
     add_codes = {a["code"] for a in additions}
     del_codes = {d["code"] for d in deletions}
 
+    # ── 估算 0050 規模（AUM）：Σ 收盤價 × ETF 持倉股數 ──────────────
+    # 優先使用 _prices（涵蓋所有上市股），top100 close_map 備援
+    def _close(code: str) -> float:
+        if code in _prices:
+            return _prices[code].get("close", 0)
+        return close_map.get(code, 0)
+
+    aum_0050 = sum(
+        _close(c) * _comp_data.get(c, LATEST_0050.get(c, ("", 0, 0.0)))[1]
+        for c in comp_codes
+        if _close(c) > 0
+    )
+    print(f"  [AUM] 估算 0050 規模：{aum_0050/1e8:.0f} 億元")
+
+    # ── 異動後新成份股組合市值，供預估新進成員權重使用 ────────────────
+    new_comp_codes = (comp_codes - del_codes) | add_codes
+    total_mv_new50 = sum(mv_map.get(c, 0) for c in new_comp_codes)
+
+    # ── 為 additions 加入預估權重與買進張數 ─────────────────────────
+    # 預估權重 = 該股市值 / 新50檔市值加總
+    # 預估買進張數 = 預估權重 × AUM / 股價 / 1000
+    for a in additions:
+        code  = a["code"]
+        close = close_map.get(code, 0)
+        mv    = mv_map.get(code, 0)
+        est_w    = (mv / total_mv_new50 * 100) if total_mv_new50 > 0 and mv > 0 else 0.0
+        est_lots = int(est_w / 100 * aum_0050 / close / 1000) if close > 0 and aum_0050 > 0 else 0
+        a["est_weight"] = round(est_w, 2)
+        a["est_lots"]   = est_lots
+
+    # ── 為 deletions 加入現有持倉張數（預估賣出量）──────────────────
+    # 持倉張數直接取 comp_data 商品數量（ETF 實際持股股數）÷ 1000
+    for d in deletions:
+        code = d["code"]
+        rec  = _comp_data.get(code, LATEST_0050.get(code, ("", 0, 0.0)))
+        qty  = rec[1] if len(rec) > 1 else 0
+        wt   = rec[2] if len(rec) > 2 else 0.0
+        d["est_weight"] = wt
+        d["est_lots"]   = int(qty / 1000) if qty > 0 else 0
+
     for s in top100:
         s["in_0050"] = s["code"] in comp_codes
         s["change"]  = ("Add" if s["code"] in add_codes else
@@ -560,6 +605,7 @@ def analyze(top100: list[dict], comp0050: dict[str, str], comp_source: str = "",
         "top100": top100, "components": comp_list,
         "additions": additions, "deletions": deletions,
         "comp_source": comp_source,
+        "aum_0050": aum_0050,
         "summary": {
             "top100_count": len(top100),
             "component_count": len(comp0050),
@@ -580,12 +626,21 @@ def fmt_cap(v: float) -> str:
     return f"{v:,.0f}"
 
 
+def fmt_lots(v: int) -> str:
+    """格式化張數：1張＝1000股"""
+    if v <= 0:     return "—"
+    if v >= 10000: return f"{v/10000:.1f}萬張"
+    if v >= 1000:  return f"{v/1000:.1f}千張"
+    return f"{v:,}張"
+
+
 def build_html(result: dict) -> str:
     updated      = result["updated_at"]
     build_ts     = result["build_ts"]
     s            = result["summary"]
     comp_source  = result.get("comp_source", "")
     is_hardcode  = "hardcode" in comp_source
+    aum_0050     = result.get("aum_0050", 0)
     adds     = result["additions"]
     dels     = result["deletions"]
     top100   = result["top100"]
@@ -595,7 +650,7 @@ def build_html(result: dict) -> str:
 
     def chg_rows():
         if not changes:
-            return ('<tr><td colspan="6" style="text-align:center;'
+            return ('<tr><td colspan="8" style="text-align:center;'
                     'padding:2rem;color:#999">目前無異動建議</td></tr>')
         out = ""
         for c in changes:
@@ -605,18 +660,24 @@ def build_html(result: dict) -> str:
                 b = ('<span class="badge badge-add-strong">▲ 強力列入 Add ★</span>'
                      if strong else
                      '<span class="badge badge-add">▲ 列入 Add</span>')
-                row_sty = ' style="background:#dcfce7"' if strong else ''
+                row_sty  = ' style="background:#dcfce7"' if strong else ''
+                lots_sty = 'color:#276749;font-weight:600'
             else:
                 b = ('<span class="badge badge-del-strong">▼ 強力踢除 Del ★</span>'
                      if strong else
                      '<span class="badge badge-del">▼ 踢除 Del</span>')
-                row_sty = ' style="background:#fee2e2"' if strong else ''
-            r_s = f"#{c['rank']}" if c["rank"] < 999 else "#100+"
-            cap = fmt_cap(c["market_cap"]) if c["market_cap"] else "—"
+                row_sty  = ' style="background:#fee2e2"' if strong else ''
+                lots_sty = 'color:#9b2c2c;font-weight:600'
+            r_s  = f"#{c['rank']}" if c["rank"] < 999 else "#100+"
+            cap  = fmt_cap(c["market_cap"]) if c["market_cap"] else "—"
+            wt   = f'{c.get("est_weight", 0):.2f}%' if c.get("est_weight") else "—"
+            lots = fmt_lots(c.get("est_lots", 0))
             out += (f'<tr{row_sty}><td>{b}</td><td class="rank">{r_s}</td>'
                     f'<td><span class="code">{c["code"]}</span></td>'
                     f'<td>{c["name"]}</td>'
                     f'<td style="text-align:right;font-family:monospace">{cap}</td>'
+                    f'<td style="text-align:right">{wt}</td>'
+                    f'<td style="text-align:right;{lots_sty}">{lots}</td>'
                     f'<td style="font-size:11px;color:#666">{c["reason"]}</td></tr>\n')
         return out
 
@@ -731,6 +792,7 @@ footer a{color:#a0aec0}
     <div class="card"><div class="lbl">0050現有成份股</div><div class="val">{s['component_count']}</div></div>
     <div class="card"><div class="lbl">可能列入</div><div class="val g">{s['add_count']}</div></div>
     <div class="card"><div class="lbl">可能踢除</div><div class="val r">{s['del_count']}</div></div>
+    <div class="card"><div class="lbl">0050規模估算</div><div class="val" style="font-size:18px">{fmt_cap(aum_0050)}</div></div>
   </div>
   <div class="tabs">
     <div class="tab on"  onclick="sw('chg')">📋 異動分析 ({s['add_count']+s['del_count']})</div>
@@ -742,7 +804,10 @@ footer a{color:#a0aec0}
       <thead><tr>
         <th style="width:110px">類型</th><th style="width:65px">排名</th>
         <th style="width:70px">代號</th><th>公司名稱</th>
-        <th style="width:100px;text-align:right">市值</th><th>原因</th>
+        <th style="width:100px;text-align:right">市值</th>
+        <th style="width:80px;text-align:right">預估權重</th>
+        <th style="width:95px;text-align:right">預估張數</th>
+        <th>原因</th>
       </tr></thead><tbody>{chg_rows()}</tbody>
     </table></div>
   </div>
@@ -815,7 +880,7 @@ def main():
     csv_data             = load_components_csv()
     comp0050, comp_source = fetch_0050(csv_data)
     comp_data            = csv_data if csv_data else LATEST_0050
-    result               = analyze(top100, comp0050, comp_source, comp_data)
+    result               = analyze(top100, comp0050, comp_source, comp_data, prices)
 
     out = Path(__file__).parent.parent / "docs"
     out.mkdir(parents=True, exist_ok=True)
@@ -827,13 +892,18 @@ def main():
 
     print("\n" + "=" * 55)
     print("✅ 完成！")
+    print(f"  0050規模估算：{result.get('aum_0050', 0)/1e8:.0f} 億元")
     print(f"  可能列入：{result['summary']['add_count']} 檔")
     for a in result["additions"]:
-        print(f"    #{a['rank']:3d}  {a['code']} {a['name']}")
+        lots = a.get('est_lots', 0)
+        wt   = a.get('est_weight', 0)
+        print(f"    #{a['rank']:3d}  {a['code']} {a['name']}  預估買進 {lots:,}張（預估權重 {wt:.2f}%）")
     print(f"  可能踢除：{result['summary']['del_count']} 檔")
     for d in result["deletions"]:
-        r = str(d['rank']) if d['rank'] < 999 else "100+"
-        print(f"    #{r:>3}  {d['code']} {d['name']}")
+        r    = str(d['rank']) if d['rank'] < 999 else "100+"
+        lots = d.get('est_lots', 0)
+        wt   = d.get('est_weight', 0)
+        print(f"    #{r:>3}  {d['code']} {d['name']}  預估賣出 {lots:,}張（目前權重 {wt:.2f}%）")
     print(f"\n  ➜ docs/index.html（含 no-cache meta）")
     print(f"  ➜ docs/result.json")
     print("=" * 55)
