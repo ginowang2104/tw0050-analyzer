@@ -110,8 +110,8 @@ CACHE_SHARES_PATH = Path(__file__).parent.parent / "docs" / ".cache_shares.json"
 # 發行股數快取版本：版本不符時強制重新抓取
 # v2 = 扣庫藏股；v3 = 加入全股/千股單位自動偵測
 CACHE_SHARES_VERSION = "v3-unit-autofix"
-# 成份股 CSV 路徑（可直接用 Excel / 文字編輯器更新，免改 Python）
-COMP_CSV_PATH = Path(__file__).parent.parent / "0050_components.csv"
+# 成份股來源路徑（可直接用文字編輯器更新，免改 Python）
+COMP_CSV_PATH = Path(__file__).parent.parent / "0050_component_paste.txt"
 
 
 def http_get(url: str, timeout: int = 30) -> requests.Response | None:
@@ -434,8 +434,8 @@ def build_top100(prices: dict) -> list[dict]:
 # ══════════════════════════════════════════════════════
 
 def load_components_csv() -> dict[str, tuple[str, int, float]]:
-    """從 0050_components.csv 讀取成份股（格式同 LATEST_0050）。
-    CSV 欄位：代號,名稱,商品數量,權重
+    """從 0050_component_paste.txt 讀取成份股（格式同 LATEST_0050）。
+    檔案為 tab 分隔，欄位：商品代碼\t商品名稱\t商品數量\t商品權重
     最後更新日期以檔案修改時間為準。"""
     if not COMP_CSV_PATH.exists():
         return {}
@@ -443,19 +443,19 @@ def load_components_csv() -> dict[str, tuple[str, int, float]]:
         import csv
         result = {}
         with open(COMP_CSV_PATH, newline='', encoding='utf-8-sig') as f:
-            for row in csv.DictReader(f):
-                code = str(row.get('代號', '')).strip()
-                name = str(row.get('名稱', '')).strip()
+            for row in csv.DictReader(f, delimiter='\t'):
+                code = str(row.get('商品代碼', '')).strip()
+                name = str(row.get('商品名稱', '')).strip()
                 qty  = int(float(str(row.get('商品數量', '0')).replace(',', '')))
-                wt   = float(str(row.get('權重', '0')).replace('%', '').replace(',', ''))
+                wt   = float(str(row.get('商品權重', '0')).replace('%', '').replace(',', ''))
                 if is_listed(code) and name:
                     result[code] = (name, qty, wt)
         if result:
             mtime = datetime.fromtimestamp(COMP_CSV_PATH.stat().st_mtime).strftime('%Y-%m-%d')
-            print(f"  [CSV] 成份股載入 {len(result)} 檔（檔案更新時間：{mtime}）")
+            print(f"  [TXT] 成份股載入 {len(result)} 檔（檔案更新時間：{mtime}）")
         return result
     except Exception as e:
-        print(f"  [WARN] 讀取 0050_components.csv 失敗：{e}")
+        print(f"  [WARN] 讀取 0050_component_paste.txt 失敗：{e}")
         return {}
 
 
