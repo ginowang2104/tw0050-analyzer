@@ -1,5 +1,5 @@
 """
-台股 0050 成份股異動分析系統 v6.1
+台股 0050 成份股異動分析系統 v6.3
 ─────────────────────────────────────────────────────────
 修正項目：
   1. 0050 hardcode 更新為 2026-05-08 最新資料（50檔）
@@ -9,6 +9,12 @@
      不再誤用 0050 ETF 持倉量（商品數量）計算市值
   4. 403 備援：收盤價加入本地快取，封鎖時自動讀取上次成功資料
   5. index.html 加入時間戳 + no-cache meta，解決 GitHub Pages 快取問題
+  6. [v6.2] is_listed 排除 9xxx 台灣存託憑證（DR）
+     t187ap03_L 欄位動態偵測 + 合理性驗證
+     市值計算加入 Method B（PBratio）/ Method C（TradeValue）備援，
+     避免 t187ap03_L 失敗時 exit code 1
+  7. [v6.3] 異動分析加入預估買進／賣出張數
+     考慮目前股價、0050規模（AUM = Σ股價×持倉股數）、預估成份股權重
 
 市值計算優先順序：
   方法 A：ClosingPrice × t187ap03_L 總發行股數（正確市值）
@@ -101,6 +107,11 @@ FALLBACK_0050 = {k: v[0] for k, v in LATEST_0050.items()}
 # 快取路徑（GitHub Actions 封鎖時，讀取上次成功的資料）
 CACHE_PATH        = Path(__file__).parent.parent / "docs" / ".cache_prices.json"
 CACHE_SHARES_PATH = Path(__file__).parent.parent / "docs" / ".cache_shares.json"
+# 發行股數快取版本：版本不符時強制重新抓取
+# v2 = 扣庫藏股；v3 = 加入全股/千股單位自動偵測
+CACHE_SHARES_VERSION = "v3-unit-autofix"
+# 成份股來源路徑（可直接用文字編輯器更新，免改 Python）
+COMP_CSV_PATH = Path(__file__).parent.parent / "0050_component_paste.txt"
 
 
 def http_get(url: str, timeout: int = 30) -> requests.Response | None:
@@ -124,7 +135,8 @@ def to_float(s) -> float:
 
 
 def is_listed(code: str) -> bool:
-    return bool(re.fullmatch(r"[1-9]\d{3}", str(code).strip()))
+    # 9xxx = 台灣存託憑證（DR），不列入上市普通股
+    return bool(re.fullmatch(r"[1-8]\d{3}", str(code).strip()))
 
 
 # ── 收盤價本地快取（應對 403 封鎖）─────────────────────────
@@ -220,6 +232,10 @@ def load_shares_cache() -> dict:
     try:
         if CACHE_SHARES_PATH.exists():
             obj = json.loads(CACHE_SHARES_PATH.read_text(encoding="utf-8"))
+            # 版本不符（舊版未扣庫藏股）→ 丟棄並強制重新抓取
+            if obj.get("_version") != CACHE_SHARES_VERSION:
+                print("  [快取] 發行股數快取版本不符（舊版未扣庫藏股），強制更新…")
+                return {}
             age_h = (time.time() - obj.get("_ts", 0)) / 3600
             if age_h < 168:  # 7 天（發行股數變動不頻繁）
                 print(f"  [快取] 使用 {age_h:.1f} 小時前的發行股數快取")
@@ -234,7 +250,7 @@ def load_shares_cache() -> dict:
 def save_shares_cache(shares: dict):
     try:
         CACHE_SHARES_PATH.parent.mkdir(parents=True, exist_ok=True)
-        obj = {"_ts": time.time(), "shares": shares}
+        obj = {"_ts": time.time(), "_version": CACHE_SHARES_VERSION, "shares": shares}
         CACHE_SHARES_PATH.write_text(json.dumps(obj, ensure_ascii=False), encoding="utf-8")
     except Exception as e:
         print(f"  [快取] 發行股數儲存失敗：{e}")
@@ -250,23 +266,88 @@ def fetch_shares() -> dict[str, float]:
         return load_shares_cache()
     try:
         data = r.json()
+        if not isinstance(data, list) or not data:
+            print("  [WARN] t187ap03_L 回傳空資料，嘗試讀取快取…")
+            return load_shares_cache()
+
+        # 偵測實際欄位名稱（方便除錯）
+        first_keys = list(data[0].keys()) if data else []
+        print(f"  [除錯] t187ap03_L 欄位：{first_keys}")
+
+        # 嘗試多種可能的欄位名稱（千股 / 仟股，全角 / 半角括號）
+        SHARES_KEYS = [
+            "普通股發行股數（千股）",   # 全角括號 + 千
+            "普通股發行股數(千股)",     # 半角括號 + 千
+            "普通股發行股數（仟股）",   # 全角括號 + 仟
+            "普通股發行股數(仟股)",     # 半角括號 + 仟
+            "普通股(千股)",
+            "普通股(仟股)",
+        ]
+        # 庫藏股欄位（已買回尚未銷除，應從發行股數中扣除）
+        TREASURY_KEYS = [
+            "庫藏股-普通股（千股）",
+            "庫藏股-普通股(千股)",
+            "庫藏股普通股（千股）",
+            "庫藏股普通股(千股)",
+            "庫藏股（千股）",
+            "庫藏股(千股)",
+        ]
+        # 動態偵測：從實際欄位中找包含「普通股」「庫藏股」與「股」的欄位
+        for k in first_keys:
+            if "普通股" in k and ("千股" in k or "仟股" in k or "股數" in k):
+                if k not in SHARES_KEYS:
+                    SHARES_KEYS.insert(0, k)
+                    print(f"  [除錯] 動態偵測到發行股數欄位：{k}")
+            if "庫藏股" in k and ("千股" in k or "仟股" in k):
+                if k not in TREASURY_KEYS:
+                    TREASURY_KEYS.insert(0, k)
+                    print(f"  [除錯] 動態偵測到庫藏股欄位：{k}")
+
         result = {}
-        # API 欄位名稱可能使用全角或半角括號
-        SHARES_KEYS = ["普通股發行股數（千股）", "普通股發行股數(千股)"]
-        for row in (data if isinstance(data, list) else []):
+        matched_key = None
+        treasury_key = None
+        for row in data:
             code = str(row.get("公司代號", "")).strip()
             if not is_listed(code):
                 continue
             for k in SHARES_KEYS:
                 val = to_float(row.get(k, 0))
                 if val > 0:
-                    result[code] = val * 1000  # 千股 → 股
+                    total = val * 1000  # 千股 → 股
+                    # 扣除庫藏股，得到流通在外股數（更接近實際市值）
+                    treasury = 0.0
+                    for tk in TREASURY_KEYS:
+                        tv = to_float(row.get(tk, 0))
+                        if tv > 0:
+                            treasury = tv * 1000
+                            if treasury_key is None:
+                                treasury_key = tk
+                            break
+                    net = total - treasury if treasury > 0 else total
+                    result[code] = max(net, total * 0.01)  # 最少保留1%防止資料異常
+                    if matched_key is None:
+                        matched_key = k
+                        print(f"  [市值-A] 使用欄位：{k}"
+                              + (f"，庫藏股欄位：{treasury_key}" if treasury_key else "（無庫藏股資料）"))
                     break
+
         if result:
+            tsmc = result.get("2330", 0)
+            # ── 合理性驗證：台積電實際流通約 259 億股（2.59×10¹⁰）──────────
+            # 情況 A：股數 < 10億  → 某欄位讀錯，資料不可用
+            if tsmc > 0 and tsmc < 1_000_000_000:
+                print(f"  [WARN] 台積電股數偏少（{tsmc:,}股），資料有誤，清除快取")
+                return load_shares_cache()
+            # 情況 B：股數 > 5000億 → API 已回傳全股（股），×1000 過度膨脹，自動 ÷1000
+            if tsmc > 500_000_000_000:
+                print(f"  [WARN] 台積電股數（{tsmc:,.0f}）偏多，"
+                      f"API 回傳單位為「股」而非「千股」，自動 ÷1000 修正…")
+                result = {k: round(v / 1000) for k, v in result.items()}
+                print(f"  [市值-A] 修正後台積電股數：{result.get('2330', 0):,.0f} 股")
             save_shares_cache(result)
             print(f"  [市值-A] t187ap03_L 取得 {len(result)} 支（已更新快取）")
         else:
-            print("  [WARN] t187ap03_L 資料為空，嘗試讀取快取…")
+            print(f"  [WARN] t187ap03_L 無法匹配發行股數欄位（欄位列表：{first_keys}），嘗試讀取快取…")
             result = load_shares_cache()
         return result
     except Exception as e:
@@ -277,42 +358,109 @@ def fetch_shares() -> dict[str, float]:
 def build_top100(prices: dict) -> list[dict]:
     print("[2/3] 計算市值排名…")
 
-    # 以 t187ap03_L（台灣證交所上市普通股）為唯一白名單
-    # 不在名單內的股票（ETF、上櫃、特別股等）一律排除
+    # ── Method A：收盤價 × t187ap03_L 總發行股數（正確市值）────────────
     total_shares = fetch_shares()
 
-    if not total_shares:
-        print("  [WARN] t187ap03_L 無資料，無法計算市值排名")
-        return []
+    if total_shares:
+        rows = []
+        for code, p in prices.items():
+            shares = total_shares.get(code, 0)
+            if shares <= 0:
+                continue
+            mv = p["close"] * shares
+            rows.append({
+                "code": code, "name": p["name"],
+                "close": p["close"], "market_cap": mv,
+                "market_cap_method": "A",
+            })
+        if rows:
+            rows.sort(key=lambda x: x["market_cap"], reverse=True)
+            for i, r in enumerate(rows, 1):
+                r["rank"] = i
+            print(f"  → [方法A] t187ap03_L 上市普通股 {len(rows)} 支，取前 {min(len(rows), TOP_N)} 大")
+            return rows[:TOP_N]
+        print("  [WARN] Method A：shares 有資料但無股票通過篩選，嘗試 Method B…")
+    else:
+        print("  [WARN] t187ap03_L 無資料，嘗試 Method B（PBratio 代理估算）…")
 
+    # ── Method B：ClosingPrice² ÷ PBratio（代理排名）────────────────────
+    bwibbu = fetch_bwibbu()
+    if bwibbu:
+        rows = []
+        for code, p in prices.items():
+            pb = bwibbu.get(code, 0)
+            if pb <= 0:
+                continue
+            mv = p["close"] ** 2 / pb  # proxy: Price × BookValue/share
+            rows.append({
+                "code": code, "name": p["name"],
+                "close": p["close"], "market_cap": mv,
+                "market_cap_method": "B",
+            })
+        if rows:
+            rows.sort(key=lambda x: x["market_cap"], reverse=True)
+            for i, r in enumerate(rows, 1):
+                r["rank"] = i
+            print(f"  → [方法B] PBratio 代理估算 {len(rows)} 支，取前 {min(len(rows), TOP_N)} 大（⚠️ 非精確市值）")
+            return rows[:TOP_N]
+        print("  [WARN] Method B：BWIBBU 有資料但無股票通過篩選，嘗試 Method C…")
+    else:
+        print("  [WARN] Method B 資料不足，嘗試 Method C（交易金額排名）…")
+
+    # ── Method C：TradeValue 排名（最後備援）────────────────────────────
     rows = []
-
     for code, p in prices.items():
-        # 不在 t187ap03_L → 非上市普通股（ETF / 上櫃 / 其他），跳過
-        shares = total_shares.get(code, 0)
-        if shares <= 0:
+        tv = p.get("trade_value", 0)
+        if tv <= 0:
             continue
-
-        mv = p["close"] * shares  # 唯一計算方式：收盤價 × 總發行股數
         rows.append({
             "code": code, "name": p["name"],
-            "close": p["close"], "market_cap": mv,
-            "market_cap_method": "A",
+            "close": p["close"], "market_cap": tv,
+            "market_cap_method": "C",
         })
+    if rows:
+        rows.sort(key=lambda x: x["market_cap"], reverse=True)
+        for i, r in enumerate(rows, 1):
+            r["rank"] = i
+        print(f"  → [方法C] 交易金額排名 {len(rows)} 支，取前 {min(len(rows), TOP_N)} 大（⚠️ 僅供參考）")
+        return rows[:TOP_N]
 
-    rows.sort(key=lambda x: x["market_cap"], reverse=True)
-    for i, r in enumerate(rows, 1):
-        r["rank"] = i
-
-    print(f"  → t187ap03_L 上市普通股 {len(rows)} 支，取前 {min(len(rows), TOP_N)} 大")
-    return rows[:TOP_N]
+    print("  [ERROR] 所有市值估算方法均失敗")
+    return []
 
 
 # ══════════════════════════════════════════════════════
 # Step 3：0050 成份股
 # ══════════════════════════════════════════════════════
 
-def fetch_0050() -> dict[str, str]:
+def load_components_csv() -> dict[str, tuple[str, int, float]]:
+    """從 0050_component_paste.txt 讀取成份股（格式同 LATEST_0050）。
+    檔案為 tab 分隔，欄位：商品代碼\t商品名稱\t商品數量\t商品權重
+    最後更新日期以檔案修改時間為準。"""
+    if not COMP_CSV_PATH.exists():
+        return {}
+    try:
+        import csv
+        result = {}
+        with open(COMP_CSV_PATH, newline='', encoding='utf-8-sig') as f:
+            for row in csv.DictReader(f, delimiter='\t'):
+                code = str(row.get('商品代碼', '')).strip()
+                name = str(row.get('商品名稱', '')).strip()
+                qty  = int(float(str(row.get('商品數量', '0')).replace(',', '')))
+                wt   = float(str(row.get('商品權重', '0')).replace('%', '').replace(',', ''))
+                if is_listed(code) and name:
+                    result[code] = (name, qty, wt)
+        if result:
+            mtime = datetime.fromtimestamp(COMP_CSV_PATH.stat().st_mtime).strftime('%Y-%m-%d')
+            print(f"  [TXT] 成份股載入 {len(result)} 檔（檔案更新時間：{mtime}）")
+        return result
+    except Exception as e:
+        print(f"  [WARN] 讀取 0050_component_paste.txt 失敗：{e}")
+        return {}
+
+
+def fetch_0050(csv_data: dict | None = None) -> tuple[dict[str, str], str]:
+    """回傳 (成份股dict, 來源說明)。來源說明用於 HTML 顯示。"""
     print("[3/3] 抓取 0050 成份股…")
 
     # 只使用 TWSE 官方 ETF API（對 GitHub Actions 友善，不受反爬蟲封鎖）
@@ -336,21 +484,33 @@ def fetch_0050() -> dict[str, str]:
                     }
                     if len(result) >= 40:
                         print(f"  → TWSE ETF API ({d}) 取得 {len(result)} 檔")
-                        return result
+                        return result, f"TWSE ETF API（{d}）"
         except Exception as e:
             print(f"  [WARN] TWSE ETF API ({d})：{e}")
         time.sleep(0.3)
 
-    print(f"  → TWSE API 無法取得，使用 hardcode 名單（{len(FALLBACK_0050)} 檔，資料日期：2026-05-08）")
-    return FALLBACK_0050.copy()
+    # CSV 備援（比 hardcode 更容易更新，以檔案修改時間為最後更新日期）
+    if csv_data and len(csv_data) >= 40:
+        mtime = datetime.fromtimestamp(COMP_CSV_PATH.stat().st_mtime).strftime('%Y-%m-%d')
+        simple = {k: v[0] for k, v in csv_data.items()}
+        print(f"  → 使用本地 CSV 名單（{len(simple)} 檔，最後更新：{mtime}）")
+        return simple, f"本地CSV（最後更新：{mtime}）"
+
+    print(f"  → CSV 不可用，使用 hardcode 名單（{len(FALLBACK_0050)} 檔，資料日期：2026-05-08）")
+    return FALLBACK_0050.copy(), "hardcode（最後更新：2026-05-08，元大投信）"
 
 
 # ══════════════════════════════════════════════════════
 # Step 4：異動分析
 # ══════════════════════════════════════════════════════
 
-def analyze(top100: list[dict], comp0050: dict[str, str]) -> dict:
+def analyze(top100: list[dict], comp0050: dict[str, str], comp_source: str = "",
+            comp_data: dict | None = None, prices: dict | None = None) -> dict:
+    _comp_data = comp_data if comp_data else LATEST_0050
+    _prices    = prices or {}
     rank_map   = {s["code"]: s["rank"] for s in top100}
+    close_map  = {s["code"]: s["close"] for s in top100}
+    mv_map     = {s["code"]: s["market_cap"] for s in top100}
     comp_codes = set(comp0050)
     additions, deletions = [], []
 
@@ -384,6 +544,46 @@ def analyze(top100: list[dict], comp0050: dict[str, str]) -> dict:
     add_codes = {a["code"] for a in additions}
     del_codes = {d["code"] for d in deletions}
 
+    # ── 估算 0050 規模（AUM）：Σ 收盤價 × ETF 持倉股數 ──────────────
+    # 優先使用 _prices（涵蓋所有上市股），top100 close_map 備援
+    def _close(code: str) -> float:
+        if code in _prices:
+            return _prices[code].get("close", 0)
+        return close_map.get(code, 0)
+
+    aum_0050 = sum(
+        _close(c) * _comp_data.get(c, LATEST_0050.get(c, ("", 0, 0.0)))[1]
+        for c in comp_codes
+        if _close(c) > 0
+    )
+    print(f"  [AUM] 估算 0050 規模：{aum_0050/1e8:.0f} 億元")
+
+    # ── 異動後新成份股組合市值，供預估新進成員權重使用 ────────────────
+    new_comp_codes = (comp_codes - del_codes) | add_codes
+    total_mv_new50 = sum(mv_map.get(c, 0) for c in new_comp_codes)
+
+    # ── 為 additions 加入預估權重與買進張數 ─────────────────────────
+    # 預估權重 = 該股市值 / 新50檔市值加總
+    # 預估買進張數 = 預估權重 × AUM / 股價 / 1000
+    for a in additions:
+        code  = a["code"]
+        close = close_map.get(code, 0)
+        mv    = mv_map.get(code, 0)
+        est_w    = (mv / total_mv_new50 * 100) if total_mv_new50 > 0 and mv > 0 else 0.0
+        est_lots = int(est_w / 100 * aum_0050 / close / 1000) if close > 0 and aum_0050 > 0 else 0
+        a["est_weight"] = round(est_w, 2)
+        a["est_lots"]   = est_lots
+
+    # ── 為 deletions 加入現有持倉張數（預估賣出量）──────────────────
+    # 持倉張數直接取 comp_data 商品數量（ETF 實際持股股數）÷ 1000
+    for d in deletions:
+        code = d["code"]
+        rec  = _comp_data.get(code, LATEST_0050.get(code, ("", 0, 0.0)))
+        qty  = rec[1] if len(rec) > 1 else 0
+        wt   = rec[2] if len(rec) > 2 else 0.0
+        d["est_weight"] = wt
+        d["est_lots"]   = int(qty / 1000) if qty > 0 else 0
+
     for s in top100:
         s["in_0050"] = s["code"] in comp_codes
         s["change"]  = ("Add" if s["code"] in add_codes else
@@ -392,7 +592,7 @@ def analyze(top100: list[dict], comp0050: dict[str, str]) -> dict:
     comp_list = [{
         "code": c, "name": n,
         "rank": rank_map.get(c, 999),
-        "weight": LATEST_0050.get(c, ("", 0, 0.0))[2],
+        "weight": _comp_data.get(c, LATEST_0050.get(c, ("", 0, 0.0)))[2],
         "market_cap": next((s["market_cap"] for s in top100 if s["code"] == c), 0),
         "change": "Delete" if c in del_codes else "",
     } for c, n in comp0050.items()]
@@ -404,6 +604,8 @@ def analyze(top100: list[dict], comp0050: dict[str, str]) -> dict:
         "build_ts": int(datetime.now().timestamp()),   # 用於 HTML 強制刷新
         "top100": top100, "components": comp_list,
         "additions": additions, "deletions": deletions,
+        "comp_source": comp_source,
+        "aum_0050": aum_0050,
         "summary": {
             "top100_count": len(top100),
             "component_count": len(comp0050),
@@ -424,10 +626,21 @@ def fmt_cap(v: float) -> str:
     return f"{v:,.0f}"
 
 
+def fmt_lots(v: int) -> str:
+    """格式化張數：1張＝1000股"""
+    if v <= 0:     return "—"
+    if v >= 10000: return f"{v/10000:.1f}萬張"
+    if v >= 1000:  return f"{v/1000:.1f}千張"
+    return f"{v:,}張"
+
+
 def build_html(result: dict) -> str:
-    updated  = result["updated_at"]
-    build_ts = result["build_ts"]
-    s        = result["summary"]
+    updated      = result["updated_at"]
+    build_ts     = result["build_ts"]
+    s            = result["summary"]
+    comp_source  = result.get("comp_source", "")
+    is_hardcode  = "hardcode" in comp_source
+    aum_0050     = result.get("aum_0050", 0)
     adds     = result["additions"]
     dels     = result["deletions"]
     top100   = result["top100"]
@@ -437,19 +650,34 @@ def build_html(result: dict) -> str:
 
     def chg_rows():
         if not changes:
-            return ('<tr><td colspan="6" style="text-align:center;'
+            return ('<tr><td colspan="8" style="text-align:center;'
                     'padding:2rem;color:#999">目前無異動建議</td></tr>')
         out = ""
         for c in changes:
-            b   = ('<span class="badge badge-add">▲ 列入 Add</span>'
-                   if c["type"] == "Add"
-                   else '<span class="badge badge-del">▼ 踢除 Del</span>')
-            r_s = f"#{c['rank']}" if c["rank"] < 999 else "#100+"
-            cap = fmt_cap(c["market_cap"]) if c["market_cap"] else "—"
-            out += (f'<tr><td>{b}</td><td class="rank">{r_s}</td>'
+            strong = ((c["type"] == "Add"    and c["rank"] <= 40) or
+                      (c["type"] == "Delete" and c["rank"] >= 60))
+            if c["type"] == "Add":
+                b = ('<span class="badge badge-add-strong">▲ 強力列入 Add ★</span>'
+                     if strong else
+                     '<span class="badge badge-add">▲ 列入 Add</span>')
+                row_sty  = ' style="background:#dcfce7"' if strong else ''
+                lots_sty = 'color:#276749;font-weight:600'
+            else:
+                b = ('<span class="badge badge-del-strong">▼ 強力踢除 Del ★</span>'
+                     if strong else
+                     '<span class="badge badge-del">▼ 踢除 Del</span>')
+                row_sty  = ' style="background:#fee2e2"' if strong else ''
+                lots_sty = 'color:#9b2c2c;font-weight:600'
+            r_s  = f"#{c['rank']}" if c["rank"] < 999 else "#100+"
+            cap  = fmt_cap(c["market_cap"]) if c["market_cap"] else "—"
+            wt   = f'{c.get("est_weight", 0):.2f}%' if c.get("est_weight") else "—"
+            lots = fmt_lots(c.get("est_lots", 0))
+            out += (f'<tr{row_sty}><td>{b}</td><td class="rank">{r_s}</td>'
                     f'<td><span class="code">{c["code"]}</span></td>'
                     f'<td>{c["name"]}</td>'
                     f'<td style="text-align:right;font-family:monospace">{cap}</td>'
+                    f'<td style="text-align:right">{wt}</td>'
+                    f'<td style="text-align:right;{lots_sty}">{lots}</td>'
                     f'<td style="font-size:11px;color:#666">{c["reason"]}</td></tr>\n')
         return out
 
@@ -522,6 +750,8 @@ tr:last-child td{border-bottom:none}tr:hover td{background:#f7fafc}
        padding:3px 8px;border-radius:99px;white-space:nowrap}
 .badge-add{background:var(--gb);color:var(--g);border:1px solid var(--ge)}
 .badge-del{background:var(--rb);color:var(--r);border:1px solid var(--re)}
+.badge-add-strong{background:var(--g);color:#fff;border:1px solid var(--g);font-weight:700}
+.badge-del-strong{background:var(--r);color:#fff;border:1px solid var(--r);font-weight:700}
 .badge-in{background:#e6fffa;color:var(--g);font-size:11px;padding:2px 6px;border-radius:99px}
 .rank{color:var(--b);font-weight:600;font-variant-numeric:tabular-nums}
 .code{font-family:monospace;font-size:12px;background:var(--bg);padding:2px 5px;border-radius:4px}
@@ -529,7 +759,9 @@ footer{text-align:center;font-size:12px;color:#a0aec0;padding:1.5rem}
 footer a{color:#a0aec0}
 @media(max-width:600px){
   .grid{grid-template-columns:repeat(2,1fr)}
-  th,td{padding:6px 7px;font-size:12px}.tab{padding:7px 10px;font-size:12px}}"""
+  th,td{padding:6px 7px;font-size:12px}.tab{padding:7px 10px;font-size:12px}
+  .tw{overflow-x:auto;border-radius:6px}
+  table{min-width:600px}}"""
 
     return f"""<!DOCTYPE html>
 <html lang="zh-TW">
@@ -547,7 +779,7 @@ footer a{color:#a0aec0}
 <header>
   <h1>📊 台股 0050 成份股異動分析</h1>
   <p>資料更新：{updated}　｜　Build：{build_ts}
-  <br>市值來源：TWSE STOCK_DAY_ALL（收盤價）× t187ap03_L（公司總發行股數）　｜　成份股來源：TWSE ETF API / hardcode</p>
+  <br>市值來源：TWSE STOCK_DAY_ALL（收盤價）× t187ap03_L（公司總發行股數）　｜　成份股來源：{comp_source}</p>
 </header>
 <div class="wrap">
   <div class="notice">
@@ -556,11 +788,13 @@ footer a{color:#a0aec0}
     市值排名<strong>落至 {DEL_THRESHOLD} 名之後</strong>且已在0050 → 可能踢除。
     每季（3/6/9/12月）正式審核，以富時羅素公告為準。
   </div>
+  {'<div class="notice" style="background:#fffbeb;border-left-color:#d97706;color:#92400e">⚠️ <strong>現有成份股資料來源：{comp_source}</strong>，非即時資料。TWSE API 不可用時自動啟用，成份股清單可能與最新不符，請留意。</div>' if is_hardcode else ''}
   <div class="grid">
     <div class="card"><div class="lbl">分析上市公司</div><div class="val">{s['top100_count']}</div></div>
     <div class="card"><div class="lbl">0050現有成份股</div><div class="val">{s['component_count']}</div></div>
     <div class="card"><div class="lbl">可能列入</div><div class="val g">{s['add_count']}</div></div>
     <div class="card"><div class="lbl">可能踢除</div><div class="val r">{s['del_count']}</div></div>
+    <div class="card"><div class="lbl">0050規模估算</div><div class="val" style="font-size:18px">{fmt_cap(aum_0050)}</div></div>
   </div>
   <div class="tabs">
     <div class="tab on"  onclick="sw('chg')">📋 異動分析 ({s['add_count']+s['del_count']})</div>
@@ -572,7 +806,10 @@ footer a{color:#a0aec0}
       <thead><tr>
         <th style="width:110px">類型</th><th style="width:65px">排名</th>
         <th style="width:70px">代號</th><th>公司名稱</th>
-        <th style="width:100px;text-align:right">市值</th><th>原因</th>
+        <th style="width:100px;text-align:right">市值</th>
+        <th style="width:80px;text-align:right">預估權重</th>
+        <th style="width:95px;text-align:right">預估張數</th>
+        <th>原因</th>
       </tr></thead><tbody>{chg_rows()}</tbody>
     </table></div>
   </div>
@@ -628,7 +865,7 @@ function flt(id,q){{
 
 def main():
     print("=" * 55)
-    print("台股 0050 成份股異動分析系統 v6.0")
+    print("台股 0050 成份股異動分析系統 v6.2")
     print(f"執行時間：{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     print("=" * 55)
 
@@ -639,11 +876,13 @@ def main():
     time.sleep(1)
     top100 = build_top100(prices)
     if not top100:
-        raise SystemExit("[ERROR] 市值計算失敗，程式終止")
+        raise SystemExit("[ERROR] 所有市值估算方法（A/B/C）均失敗，程式終止")
 
     time.sleep(1)
-    comp0050 = fetch_0050()
-    result   = analyze(top100, comp0050)
+    csv_data             = load_components_csv()
+    comp0050, comp_source = fetch_0050(csv_data)
+    comp_data            = csv_data if csv_data else LATEST_0050
+    result               = analyze(top100, comp0050, comp_source, comp_data, prices)
 
     out = Path(__file__).parent.parent / "docs"
     out.mkdir(parents=True, exist_ok=True)
@@ -655,13 +894,18 @@ def main():
 
     print("\n" + "=" * 55)
     print("✅ 完成！")
+    print(f"  0050規模估算：{result.get('aum_0050', 0)/1e8:.0f} 億元")
     print(f"  可能列入：{result['summary']['add_count']} 檔")
     for a in result["additions"]:
-        print(f"    #{a['rank']:3d}  {a['code']} {a['name']}")
+        lots = a.get('est_lots', 0)
+        wt   = a.get('est_weight', 0)
+        print(f"    #{a['rank']:3d}  {a['code']} {a['name']}  預估買進 {lots:,}張（預估權重 {wt:.2f}%）")
     print(f"  可能踢除：{result['summary']['del_count']} 檔")
     for d in result["deletions"]:
-        r = str(d['rank']) if d['rank'] < 999 else "100+"
-        print(f"    #{r:>3}  {d['code']} {d['name']}")
+        r    = str(d['rank']) if d['rank'] < 999 else "100+"
+        lots = d.get('est_lots', 0)
+        wt   = d.get('est_weight', 0)
+        print(f"    #{r:>3}  {d['code']} {d['name']}  預估賣出 {lots:,}張（目前權重 {wt:.2f}%）")
     print(f"\n  ➜ docs/index.html（含 no-cache meta）")
     print(f"  ➜ docs/result.json")
     print("=" * 55)
