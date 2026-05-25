@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-05-23 04:29",
-  "build_ts": 1779510571,
+  "updated_at": "2026-05-25 13:46",
+  "build_ts": 1779716789,
   "top100": [
     {
       "code": "2330",
@@ -286,7 +286,7 @@
       "code": "4958",
       "name": "臻鼎-KY",
       "close": 516.0,
-      "market_cap": 552428648496.0,
+      "market_cap": 556981161180.0,
       "market_cap_method": "A",
       "rank": 29,
       "in_0050": false,
@@ -1424,17 +1424,17 @@
       "market_cap": 603518564858.0,
       "reason": "市值排名第25，尚未在0050",
       "est_weight": 0.55,
-      "est_lots": 10771
+      "est_lots": 10770
     },
     {
       "type": "Add",
       "rank": 29,
       "code": "4958",
       "name": "臻鼎-KY",
-      "market_cap": 552428648496.0,
+      "market_cap": 556981161180.0,
       "reason": "市值排名第29，尚未在0050",
-      "est_weight": 0.5,
-      "est_lots": 17846
+      "est_weight": 0.51,
+      "est_lots": 17992
     },
     {
       "type": "Add",
@@ -1489,8 +1489,8 @@
       "est_lots": 18997
     }
   ],
-  "comp_source": "本地CSV（最後更新：2026-05-23）",
-  "aum_0050": 1830052656709.75,
+  "comp_source": "本地CSV（最後更新：2026-05-25）",
+  "aum_0050": 1830052656709.7498,
   "summary": {
     "top100_count": 100,
     "component_count": 50,
