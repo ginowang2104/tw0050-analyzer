@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-05-26 13:27",
-  "build_ts": 1779802049,
+  "updated_at": "2026-05-27 13:59",
+  "build_ts": 1779890381,
   "top100": [
     {
       "code": "2330",
@@ -486,7 +486,7 @@
       "code": "3189",
       "name": "景碩",
       "close": 696.0,
-      "market_cap": 366740468160.0,
+      "market_cap": 366733368960.0,
       "market_cap_method": "A",
       "rank": 49,
       "in_0050": false,
@@ -756,7 +756,7 @@
       "code": "4938",
       "name": "和碩",
       "close": 81.4,
-      "market_cap": 218328239384.2,
+      "market_cap": 218318389984.2,
       "market_cap_method": "A",
       "rank": 76,
       "in_0050": false,
@@ -946,7 +946,7 @@
       "code": "2492",
       "name": "華新科",
       "close": 328.5,
-      "market_cap": 159586868259.0,
+      "market_cap": 159389768259.0,
       "market_cap_method": "A",
       "rank": 95,
       "in_0050": false,
@@ -1489,8 +1489,8 @@
       "est_lots": 18997
     }
   ],
-  "comp_source": "本地CSV（最後更新：2026-05-26）",
-  "aum_0050": 1884162914434.9495,
+  "comp_source": "本地CSV（最後更新：2026-05-27）",
+  "aum_0050": 1884162914434.95,
   "summary": {
     "top100_count": 100,
     "component_count": 50,
