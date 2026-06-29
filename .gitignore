@@ -3,3 +3,4 @@ note.txt
 *.env
 .env*
 secrets.*
+upload_to_github.bat
