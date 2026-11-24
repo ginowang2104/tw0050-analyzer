@@ -1,6 +1,6 @@
 {
-  "updated_at": "2026-11-23 22:10",
-  "build_ts": 1795471834,
+  "updated_at": "2026-11-24 20:46",
+  "build_ts": 1795553182,
   "top100": [
     {
       "code": "2330",
@@ -1008,7 +1008,7 @@
       "code": "2330",
       "name": "台積電",
       "rank": 1,
-      "weight": 59.66,
+      "weight": 59.8,
       "market_cap": 52642711236010.0,
       "change": ""
     },
@@ -1016,7 +1016,7 @@
       "code": "2454",
       "name": "聯發科",
       "rank": 2,
-      "weight": 6.52,
+      "weight": 6.53,
       "market_cap": 5914144597295.0,
       "change": ""
     },
@@ -1024,7 +1024,7 @@
       "code": "2317",
       "name": "鴻海",
       "rank": 3,
-      "weight": 3.02,
+      "weight": 3.03,
       "market_cap": 2899603778382.0,
       "change": ""
     },
@@ -1040,7 +1040,7 @@
       "code": "3711",
       "name": "日月光投控",
       "rank": 5,
-      "weight": 1.92,
+      "weight": 1.93,
       "market_cap": 2163259015126.0,
       "change": ""
     },
@@ -1056,7 +1056,7 @@
       "code": "1303",
       "name": "南亞",
       "rank": 7,
-      "weight": 1.34,
+      "weight": 1.35,
       "market_cap": 1796331089908.5,
       "change": ""
     },
@@ -1072,7 +1072,7 @@
       "code": "2412",
       "name": "中華電",
       "rank": 9,
-      "weight": 0.75,
+      "weight": 0.69,
       "market_cap": 1276099956652.5,
       "change": ""
     },
@@ -1128,7 +1128,7 @@
       "code": "3037",
       "name": "欣興",
       "rank": 16,
-      "weight": 0.88,
+      "weight": 0.89,
       "market_cap": 915840710568.0,
       "change": ""
     },
@@ -1152,7 +1152,7 @@
       "code": "6505",
       "name": "台塑化",
       "rank": 19,
-      "weight": 0.11,
+      "weight": 0.1,
       "market_cap": 778270903568.4,
       "change": ""
     },
@@ -1168,7 +1168,7 @@
       "code": "2345",
       "name": "智邦",
       "rank": 21,
-      "weight": 0.8,
+      "weight": 0.81,
       "market_cap": 757509160950.0,
       "change": ""
     },
@@ -1192,7 +1192,7 @@
       "code": "2884",
       "name": "玉山金",
       "rank": 24,
-      "weight": 0.74,
+      "weight": 0.72,
       "market_cap": 685899855227.7001,
       "change": ""
     },
@@ -1208,7 +1208,7 @@
       "code": "2880",
       "name": "華南金",
       "rank": 26,
-      "weight": 0.5,
+      "weight": 0.48,
       "market_cap": 631120449781.1,
       "change": ""
     },
@@ -1240,7 +1240,7 @@
       "code": "2892",
       "name": "第一金",
       "rank": 30,
-      "weight": 0.51,
+      "weight": 0.49,
       "market_cap": 541386994672.5,
       "change": ""
     },
@@ -1296,7 +1296,7 @@
       "code": "6446",
       "name": "藥華藥",
       "rank": 37,
-      "weight": 0.42,
+      "weight": 0.4,
       "market_cap": 473135752320.0,
       "change": ""
     },
@@ -1312,7 +1312,7 @@
       "code": "3045",
       "name": "台灣大",
       "rank": 39,
-      "weight": 0.21,
+      "weight": 0.2,
       "market_cap": 457982014845.0,
       "change": ""
     },
@@ -1336,7 +1336,7 @@
       "code": "1216",
       "name": "統一",
       "rank": 42,
-      "weight": 0.45,
+      "weight": 0.42,
       "market_cap": 428992164285.5,
       "change": ""
     },
@@ -1352,7 +1352,7 @@
       "code": "5880",
       "name": "合庫金",
       "rank": 44,
-      "weight": 0.34,
+      "weight": 0.33,
       "market_cap": 416289672728.3,
       "change": ""
     },
@@ -1376,7 +1376,7 @@
       "code": "4958",
       "name": "臻鼎-KY",
       "rank": 47,
-      "weight": 0.31,
+      "weight": 0.32,
       "market_cap": 376421587210.5,
       "change": ""
     },
@@ -1384,7 +1384,7 @@
       "code": "4904",
       "name": "遠傳",
       "rank": 48,
-      "weight": 0.22,
+      "weight": 0.21,
       "market_cap": 371593651771.0,
       "change": ""
     },
@@ -1415,11 +1415,11 @@
       "market_cap": 201569523926.0,
       "reason": "市值排名第68（≥57觸發）",
       "est_weight": 0.22,
-      "est_lots": 31162
+      "est_lots": 31432
     }
   ],
-  "comp_source": "本地CSV（最後更新：2026-11-23）",
-  "aum_0050": 2262597955757.6,
+  "comp_source": "本地CSV（最後更新：2026-11-24）",
+  "aum_0050": 2282165802162.6,
   "summary": {
     "top100_count": 100,
     "component_count": 50,
